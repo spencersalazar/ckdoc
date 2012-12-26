@@ -29,7 +29,9 @@
 #include "chuck_errmsg.h"
 #include "chuck_globals.h"
 #include "util_string.h"
+#include "chuck_symbol.h"
 
+using namespace std;
 
 static bool g_vm_on = false;
 
@@ -40,7 +42,16 @@ int main(int argc, const char ** argv)
 {
     start_vm();
     
-    // iterate through 
+    // iterate through types
+    
+    Chuck_Env * env = Chuck_Env::instance();
+    vector<Chuck_Type *> types;
+    env->global()->get_types(types);
+    
+    for(vector<Chuck_Type *>::iterator i = types.begin(); i != types.end(); i++)
+    {
+        fprintf(stderr, "%s\n", (*i)->name.c_str());
+    }
     
     stop_vm();
     
