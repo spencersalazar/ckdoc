@@ -1,76 +1,93 @@
 
+CHUCK_SRC_DIR=chuck/src
 
-CFLAGS+= -D__MACOSX_CORE__
-CFLAGSDEPEND+= -D__MACOSX_CORE__
+.PHONY: osx linux-oss linux-jack linux-alsa win32 osx-rl
+osx linux-oss linux-jack linux-alsa win32 osx-rl: ckdoc
 
-FRAMEWORKS+= CoreAudio CoreMIDI CoreFoundation IOKit Carbon AppKit Foundation
-LDFLAGS+= $(addprefix -framework ,$(FRAMEWORKS)) -lstdc++ -lm
+ifneq ($(CK_TARGET),)
+.DEFAULT_GOAL:=$(CK_TARGET)
+ifeq ($(MAKECMDGOALS),)
+MAKECMDGOALS:=$(.DEFAULT_GOAL)
+endif
+endif
 
-CC=clang
-CXX=clang++
-LD=clang++
+LEX=flex
+YACC=bison
+CC=gcc
+CXX=gcc
+LD=g++
 
-C_FILES=
-C_OBJS=$(addsuffix $(basename C_FILES))
+CFLAGS+= -I$(CHUCK_SRC_DIR)
 
-CXX_FILES=ckdoc.cpp
-CXX_OBJS=$(addsuffix $(basename CXX_FILES))
+ifneq ($(CHUCK_DEBUG),)
+CFLAGS+= -g
+else
+CFLAGS+= -O3
+endif
 
-CHUCK_SRC_DIR=../chuck/trunk/src
+ifneq (,$(strip $(filter osx bin-dist-osx,$(MAKECMDGOALS))))
+include $(CHUCK_SRC_DIR)/makefile.osx
+endif
 
-CHUCK_CSRCS= $(CHUCK_SRC_DIR)/util_math.c $(CHUCK_SRC_DIR)/util_network.c \
-    $(CHUCK_SRC_DIR)/util_raw.c $(CHUCK_SRC_DIR)/util_xforms.c \
-    $(CHUCK_SRC_DIR)/util_sndfile.c
+ifneq (,$(strip $(filter linux-oss,$(MAKECMDGOALS))))
+include $(CHUCK_SRC_DIR)/makefile.oss
+endif
 
-CHUCK_CXXSRCS= $(CHUCK_SRC_DIR)/chuck_absyn.cpp $(CHUCK_SRC_DIR)/chuck_parse.cpp \
-	$(CHUCK_SRC_DIR)/chuck_errmsg.cpp $(CHUCK_SRC_DIR)/chuck_frame.cpp \
-	$(CHUCK_SRC_DIR)/chuck_symbol.cpp $(CHUCK_SRC_DIR)/chuck_table.cpp \
-	$(CHUCK_SRC_DIR)/chuck_utils.cpp $(CHUCK_SRC_DIR)/chuck_vm.cpp \
-	$(CHUCK_SRC_DIR)/chuck_instr.cpp $(CHUCK_SRC_DIR)/chuck_scan.cpp \
-	$(CHUCK_SRC_DIR)/chuck_type.cpp $(CHUCK_SRC_DIR)/chuck_emit.cpp \
-	$(CHUCK_SRC_DIR)/chuck_compile.cpp $(CHUCK_SRC_DIR)/chuck_dl.cpp \
-	$(CHUCK_SRC_DIR)/chuck_oo.cpp $(CHUCK_SRC_DIR)/chuck_lang.cpp \
-	$(CHUCK_SRC_DIR)/chuck_ugen.cpp $(CHUCK_SRC_DIR)/chuck_globals.cpp \
-	$(CHUCK_SRC_DIR)/chuck_otf.cpp $(CHUCK_SRC_DIR)/chuck_stats.cpp \
-	$(CHUCK_SRC_DIR)/chuck_bbq.cpp $(CHUCK_SRC_DIR)/chuck_shell.cpp \
-	$(CHUCK_SRC_DIR)/chuck_console.cpp $(CHUCK_SRC_DIR)/digiio_rtaudio.cpp \
-	$(CHUCK_SRC_DIR)/hidio_sdl.cpp \
-	$(CHUCK_SRC_DIR)/midiio_rtmidi.cpp $(CHUCK_SRC_DIR)/RtAudio/RtAudio.cpp \
-	$(CHUCK_SRC_DIR)/rtmidi.cpp $(CHUCK_SRC_DIR)/ugen_osc.cpp \
-	$(CHUCK_SRC_DIR)/ugen_filter.cpp $(CHUCK_SRC_DIR)/ugen_stk.cpp \
-	$(CHUCK_SRC_DIR)/ugen_xxx.cpp \
-	$(CHUCK_SRC_DIR)/uana_extract.cpp $(CHUCK_SRC_DIR)/uana_xform.cpp \
-	$(CHUCK_SRC_DIR)/ulib_machine.cpp $(CHUCK_SRC_DIR)/ulib_math.cpp \
-	$(CHUCK_SRC_DIR)/ulib_std.cpp $(CHUCK_SRC_DIR)/ulib_opsc.cpp \
-	$(CHUCK_SRC_DIR)/util_buffers.cpp $(CHUCK_SRC_DIR)/util_console.cpp \
-	$(CHUCK_SRC_DIR)/util_string.cpp \
-	$(CHUCK_SRC_DIR)/util_thread.cpp \
-	$(CHUCK_SRC_DIR)/util_opsc.cpp $(CHUCK_SRC_DIR)/util_hid.cpp
+ifneq (,$(strip $(filter linux-jack,$(MAKECMDGOALS))))
+include $(CHUCK_SRC_DIR)/makefile.jack
+endif
 
-CHUCK_COBJS=$(CHUCK_CSRCS:.c=.o)
-CHUCK_CXXOBJS=$(CHUCK_CXXSRCS:.cpp=.o)
-CHUCK_OBJS+=$(CHUCK_COBJS) $(CHUCK_CXXOBJS) \
-    $(CHUCK_SRC_DIR)/chuck.tab.o $(CHUCK_SRC_DIR)/chuck.yy.o
+ifneq (,$(strip $(filter linux-alsa,$(MAKECMDGOALS))))
+include $(CHUCK_SRC_DIR)/makefile.alsa
+endif
 
+ifneq (,$(strip $(filter win32,$(MAKECMDGOALS))))
+include $(CHUCK_SRC_DIR)/makefile.win32
+endif
+
+CSRCS+= chuck.tab.c chuck.yy.c util_math.c util_network.c util_raw.c \
+util_xforms.c
+CXXSRCS+= chuck_absyn.cpp chuck_parse.cpp chuck_errmsg.cpp \
+chuck_frame.cpp chuck_symbol.cpp chuck_table.cpp chuck_utils.cpp \
+chuck_vm.cpp chuck_instr.cpp chuck_scan.cpp chuck_type.cpp chuck_emit.cpp \
+chuck_compile.cpp chuck_dl.cpp chuck_oo.cpp chuck_lang.cpp chuck_ugen.cpp \
+chuck_otf.cpp chuck_stats.cpp chuck_bbq.cpp chuck_shell.cpp chuck_console.cpp \
+chuck_globals.cpp \
+digiio_rtaudio.cpp hidio_sdl.cpp midiio_rtmidi.cpp RtAudio/RtAudio.cpp \
+rtmidi.cpp ugen_osc.cpp ugen_filter.cpp ugen_stk.cpp ugen_xxx.cpp \
+ulib_machine.cpp ulib_math.cpp ulib_std.cpp ulib_opsc.cpp util_buffers.cpp \
+util_console.cpp util_string.cpp util_thread.cpp util_opsc.cpp util_hid.cpp \
+uana_xform.cpp uana_extract.cpp
+
+CSRCS:=$(addprefix $(CHUCK_SRC_DIR)/,$(CSRCS))
+CXXSRCS:=$(addprefix $(CHUCK_SRC_DIR)/,$(CXXSRCS))
+
+CXXSRCS+=ckdoc.cpp
+
+COBJS=$(CSRCS:.c=.o)
+CXXOBJS=$(CXXSRCS:.cpp=.o)
 OBJS=$(COBJS) $(CXXOBJS)
+
+# remove -arch options
+CFLAGSDEPEND=$(CFLAGS)
 
 -include $(OBJS:.o=.d)
 
-ckdoc: $(OBJS) $(CHUCK_OBJS)
-	$(LD) -o ckdoc $(OBJS) $(CHUCK_OBJS) $(LDFLAGS)
+ckdoc: $(OBJS)
+	$(LD) -o ckdoc $(OBJS) $(LDFLAGS)
 
-$(CHUCK_OBJS): chuck
+chuck.tab.c chuck.tab.h: $(CHUCK_SRC_DIR)/chuck.y
+	$(YACC) -dv -b $(CHUCK_SRC_DIR)/chuck $(CHUCK_SRC_DIR)/chuck.y
 
-.PHONY: chuck
-chuck:
-	CFLAGS=__ALTER_ENTRY_POINT__ make -C $(CHUCK_SRC_DIR)
+chuck.yy.c: chuck.lex
+	$(LEX) -o$(CHUCK_SRC_DIR)/chuck.yy.c $(CHUCK_SRC_DIR)/chuck.lex
 
 $(COBJS): %.o: %.c
-	$(CC) $(CFLAGS) $(ARCHOPTS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 	@$(CC) -MM $(CFLAGSDEPEND) $< > $*.d
 
 $(CXXOBJS): %.o: %.cpp
-	$(CXX) $(CFLAGS) $(ARCHOPTS) -c $< -o $@
+	$(CXX) $(CFLAGS) -c $< -o $@
 	@$(CXX) -MM $(CFLAGSDEPEND) $< > $*.d
 
 clean: 
