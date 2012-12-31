@@ -38,6 +38,20 @@ static bool g_vm_on = false;
 t_CKBOOL start_vm();
 t_CKBOOL stop_vm();
 
+bool skip(string &name)
+{
+    if(name == "void" ||
+       name == "int" ||
+       name == "float" ||
+       name == "time" ||
+       name == "dur" ||
+       name == "complex" ||
+       name == "polar" ||
+       name == "@function")
+        return true;
+    return false;
+}
+
 int main(int argc, const char ** argv)
 {
     start_vm();
@@ -48,9 +62,83 @@ int main(int argc, const char ** argv)
     vector<Chuck_Type *> types;
     env->global()->get_types(types);
     
-    for(vector<Chuck_Type *>::iterator i = types.begin(); i != types.end(); i++)
+    for(vector<Chuck_Type *>::iterator t = types.begin(); t != types.end(); t++)
     {
-        fprintf(stderr, "%s\n", (*i)->name.c_str());
+        Chuck_Type * type = *t;
+        
+        if(skip(type->name)) continue;
+        
+        // class name
+        fprintf(stdout, "## %s\n", type->name.c_str());
+        
+        // type heirarchy
+        Chuck_Type * parent = type->parent;
+        if(parent != NULL) fprintf(stdout, "####");
+        while(parent != NULL)
+        {
+            fprintf(stdout, "< %s ", parent->name.c_str());
+            parent = parent->parent;
+        }
+        if(type->parent != NULL) fprintf(stdout, "\n");
+        
+        if(type->info)
+        {
+            fprintf(stdout, "### member functions\n");
+            
+            map<string, int> member_names;
+            vector<Chuck_Func *> funcs;
+            type->info->get_funcs(funcs);
+            for(vector<Chuck_Func *>::iterator f = funcs.begin(); f != funcs.end(); f++)
+            {
+                Chuck_Func * func = *f;
+                
+                if(member_names.count(func->name))
+                    continue;
+                member_names[func->name] = 1;
+                
+                if(func && func->def)
+                {
+                    // return type
+                    fprintf(stdout, "*%s", func->def->ret_type->name.c_str());
+                    for(int i = 0; i < func->def->ret_type->array_depth; i++)
+                        fprintf(stdout, "\\[\\]");
+                    fprintf(stdout, "* ");
+                    
+                    // function name
+                    fprintf(stdout, "**%s**(", S_name(func->def->name));
+                    
+                    // argument list
+                    a_Arg_List args = func->def->arg_list;
+                    while(args != NULL)
+                    {
+                        // argument type
+                        fprintf(stdout, "*%s", args->type->name.c_str());
+                        for(int i = 0; i < args->type->array_depth; i++)
+                            fprintf(stdout, "\\[\\]");
+                        fprintf(stdout, "* ");
+                        
+                        // argument name
+                        fprintf(stdout, "%s", S_name(args->var_decl->xid));
+                        
+                        if(args->next != NULL)
+                            fprintf(stdout, ", ");
+                        args = args->next;
+                    }
+                    
+                    fprintf(stdout, ")");
+                    
+                    //fprintf(stdout, " [%lu %s]", func->vt_index, func->name.c_str());
+                    
+                    fprintf(stdout, "\n\n");
+                }
+//                else if(func)
+//                {
+//                    fprintf(stdout, "%s\n", func->name.c_str());
+//                }
+            }
+        }
+        
+        fprintf(stdout, "- - -\n");
     }
     
     stop_vm();

@@ -84,11 +84,11 @@ chuck.yy.c: chuck.lex
 
 $(COBJS): %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
-	@$(CC) -MM $(CFLAGSDEPEND) $< > $*.d
+	@$(CC) -MM -MT "$@" $(CFLAGSDEPEND) $< > $*.d
 
 $(CXXOBJS): %.o: %.cpp
 	$(CXX) $(CFLAGS) -c $< -o $@
-	@$(CXX) -MM $(CFLAGSDEPEND) $< > $*.d
+	@$(CXX) -MM -MT "$@" $(CFLAGSDEPEND) $< > $*.d
 
 clean: 
 	@rm -f ckdoc *.o *.d $(OBJS) $(patsubst %.o,%.d,$(OBJS)) *~
