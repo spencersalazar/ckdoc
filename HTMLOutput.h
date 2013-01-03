@@ -25,9 +25,42 @@
 class HTMLOutput : public Output
 {
 public:
+    HTMLOutput(FILE * output = stdout) :
+    m_output(output)
+    { }
+    
+    void begin()
+    {
+        fprintf(m_output,
+"<html>\n\
+<link rel=\"stylesheet\" type=\"text/css\" href=\"ckdoc.css\" />\n\
+<body>\n\
+");
+    }
+    
+    void end()
+    {
+        fprintf(m_output, "</body>\n</html>\n");
+    }
+    
     void begin_class(Chuck_Type * type)
     {
+        fprintf(m_output, "<div class=\"class\">\n<h2>%s</h2>\n", type->name.c_str());
         
+        // type heirarchy
+        Chuck_Type * parent = type->parent;
+        if(parent != NULL) fprintf(m_output, "<h4>");
+        while(parent != NULL)
+        {
+            fprintf(m_output, ": %s ", parent->name.c_str());
+            parent = parent->parent;
+        }
+        if(type->parent != NULL) fprintf(m_output, "</h4>\n");
+    }
+    
+    void end_class()
+    {
+        fprintf(m_output, "</div>\n<hr />\n");
     }
     
     void begin_static_member_vars()
@@ -53,7 +86,7 @@ public:
     
     void begin_static_member_funcs()
     {
-        
+        fprintf(m_output, "<h3>static member functions</h3>\n");
     }
     
     void end_static_member_funcs()
@@ -63,7 +96,7 @@ public:
     
     void begin_member_funcs()
     {
-        
+        fprintf(m_output, "<h3>member functions</h3>\n");
     }
     
     void end_member_funcs()
@@ -84,32 +117,55 @@ public:
     
     void begin_static_member_func(Chuck_Func * func)
     {
+        // return type
+        fprintf(m_output, "<p><span class=\"typename\">%s", func->def->ret_type->name.c_str());
+        for(int i = 0; i < func->def->ret_type->array_depth; i++)
+            fprintf(m_output, "[]");
+        fprintf(m_output, "</span> ");
+        
+        // function name
+        fprintf(m_output, "<span class=\"name\">%s</span>(", S_name(func->def->name));
         
     }
     
     void end_static_member_func()
     {
-        
+        fprintf(m_output, ")</p>\n");
     }
     
     void begin_member_func(Chuck_Func * func)
     {
+        // return type
+        fprintf(m_output, "<p><span class=\"typename\">%s", func->def->ret_type->name.c_str());
+        for(int i = 0; i < func->def->ret_type->array_depth; i++)
+            fprintf(m_output, "[]");
+        fprintf(m_output, "</span> ");
         
+        // function name
+        fprintf(m_output, "<span class=\"name\">%s</span>(", S_name(func->def->name));
     }
     
     void end_member_func()
     {
-        
+        fprintf(m_output, ")</p>\n");
     }
     
     void func_arg(a_Arg_List arg)
     {
+        // argument type
+        fprintf(m_output, "<span class=\"typename\">%s", arg->type->name.c_str());
+        for(int i = 0; i < arg->type->array_depth; i++)
+            fprintf(m_output, "[]");
+        fprintf(m_output, "</span> ");
         
+        // argument name
+        fprintf(m_output, "%s", S_name(arg->var_decl->xid));
+        
+        if(arg->next != NULL)
+            fprintf(m_output, ", ");
     }
     
-    void end_class(Chuck_Type * type)
-    {
-        
-    }
+private:
+    FILE * m_output;
 };
 

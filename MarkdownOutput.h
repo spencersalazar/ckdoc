@@ -31,6 +31,9 @@ public:
     m_output(output)
     { }
     
+    void begin() {}
+    void end() {}
+    
     void begin_class(Chuck_Type * type)
     {
         fprintf(m_output, "## %s\n", type->name.c_str());

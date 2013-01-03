@@ -31,7 +31,7 @@
 #include "util_string.h"
 #include "chuck_symbol.h"
 
-#include "MarkdownOutput.h"
+#include "HTMLOutput.h"
 
 
 using namespace std;
@@ -59,9 +59,11 @@ int main(int argc, const char ** argv)
 {
     start_vm();
     
-    Output * output = new MarkdownOutput(stdout);
+    Output * output = new HTMLOutput(stdout);
     
     // iterate through types
+    
+    output->begin();
     
     Chuck_Env * env = Chuck_Env::instance();
     vector<Chuck_Type *> types;
@@ -151,6 +153,8 @@ int main(int argc, const char ** argv)
     
         output->end_class();
     }
+    
+    output->end();
 
     stop_vm();
     

@@ -25,6 +25,10 @@
 class Output
 {
 public:
+    
+    virtual void begin() = 0;
+    virtual void end() = 0;
+    
     virtual void begin_class(Chuck_Type * type) = 0;
     
     virtual void begin_static_member_vars() = 0;

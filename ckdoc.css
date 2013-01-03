@@ -1,0 +1,22 @@
+
+body
+{
+    margin: 2em 10em 2em 2em;
+    font-family: "Helvetica";
+}
+
+.class
+{
+    background-color: #eee;
+    padding: 0.025em 0.5em 0.25em 1em;
+}
+
+.typename
+{
+    font-style: italic;
+}
+
+.name
+{
+    font-weight: bold;
+}
