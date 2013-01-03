@@ -84,12 +84,31 @@ int main(int argc, const char ** argv)
             map<string, int> func_names;
             vector<Chuck_Func *> funcs;
             type->info->get_funcs(funcs);
+            vector<Chuck_Value *> vars;
+            type->info->get_values(vars);
             
             vector<Chuck_Func *> mfuncs;
             vector<Chuck_Func *> sfuncs;
             vector<Chuck_Value *> mvars;
             vector<Chuck_Value *> svars;
 
+            for(vector<Chuck_Value *>::iterator v = vars.begin(); v != vars.end(); v++)
+            {
+                Chuck_Value * value = *v;
+                
+                if(value->name.length() == 0)
+                    continue;
+                if(value->name[0] == '@')
+                    continue;
+                if(value->type->name == "[function]")
+                    continue;
+                
+                if(value->is_static)
+                    svars.push_back(value);
+                else
+                    mvars.push_back(value);
+            }
+            
             for(vector<Chuck_Func *>::iterator f = funcs.begin(); f != funcs.end(); f++)
             {
                 Chuck_Func * func = *f;
@@ -102,6 +121,22 @@ int main(int argc, const char ** argv)
                     sfuncs.push_back(func);
                 else
                     mfuncs.push_back(func);
+            }
+            
+            if(svars.size())
+            {
+                output->begin_static_member_vars();
+                for(vector<Chuck_Value *>::iterator v = svars.begin(); v != svars.end(); v++)
+                    output->static_member_var(*v);
+                output->end_static_member_vars();
+            }
+            
+            if(mvars.size())
+            {
+                output->begin_member_vars();
+                for(vector<Chuck_Value *>::iterator v = mvars.begin(); v != mvars.end(); v++)
+                    output->member_var(*v);
+                output->end_member_vars();
             }
             
             if(sfuncs.size())
@@ -148,6 +183,8 @@ int main(int argc, const char ** argv)
                     
                     output->end_member_func();
                 }
+                
+                output->end_member_funcs();
             }
         }
     

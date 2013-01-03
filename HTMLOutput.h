@@ -45,14 +45,16 @@ public:
     
     void begin_class(Chuck_Type * type)
     {
-        fprintf(m_output, "<div class=\"class\">\n<h2>%s</h2>\n", type->name.c_str());
+        fprintf(m_output, "<div class=\"class\">\n");
+        fprintf(m_output, "<a name=\"%s\" /><h2 name=\"%s\">%s</h2>\n",
+                type->name.c_str(), type->name.c_str(), type->name.c_str());
         
         // type heirarchy
         Chuck_Type * parent = type->parent;
         if(parent != NULL) fprintf(m_output, "<h4>");
         while(parent != NULL)
         {
-            fprintf(m_output, ": %s ", parent->name.c_str());
+            fprintf(m_output, ": <a href=\"#%s\">%s</a> ", parent->name.c_str(), parent->name.c_str());
             parent = parent->parent;
         }
         if(type->parent != NULL) fprintf(m_output, "</h4>\n");
@@ -65,54 +67,66 @@ public:
     
     void begin_static_member_vars()
     {
-        
+        fprintf(m_output, "<h3>static member variables</h3>\n<div class=\"members\">\n");
     }
     
     void end_static_member_vars()
     {
-        
+        fprintf(m_output, "</div>\n");
     }
     
     void begin_member_vars()
     {
-        
+        fprintf(m_output, "<h3>member variables</h3>\n<div class=\"members\">\n");
     }
     
     void end_member_vars()
     {
-        
+        fprintf(m_output, "</div>\n");
     }
     
     
     void begin_static_member_funcs()
     {
-        fprintf(m_output, "<h3>static member functions</h3>\n");
+        fprintf(m_output, "<h3>static member functions</h3>\n<div class=\"members\">\n");
     }
     
     void end_static_member_funcs()
     {
-        
+        fprintf(m_output, "</div>\n");
     }
     
     void begin_member_funcs()
     {
-        fprintf(m_output, "<h3>member functions</h3>\n");
+        fprintf(m_output, "<h3>member functions</h3>\n<div class=\"members\">\n");
     }
     
     void end_member_funcs()
     {
-        
+        fprintf(m_output, "</div>\n");
     }
     
     
     void static_member_var(Chuck_Value * var)
     {
+        fprintf(m_output, "<p><span class=\"typename\">%s", var->type->name.c_str());
+        for(int i = 0; i < var->type->array_depth; i++)
+            fprintf(m_output, "[]");
+        fprintf(m_output, "</span> ");
         
+        // function name
+        fprintf(m_output, "<span class=\"name\">%s</span></p>", var->name.c_str());
     }
     
     void member_var(Chuck_Value * var)
     {
+        fprintf(m_output, "<p><span class=\"typename\">%s", var->type->name.c_str());
+        for(int i = 0; i < var->type->array_depth; i++)
+            fprintf(m_output, "[]");
+        fprintf(m_output, "</span> ");
         
+        // function name
+        fprintf(m_output, "<span class=\"name\">%s</span></p>", var->name.c_str());
     }
     
     void begin_static_member_func(Chuck_Func * func)
