@@ -31,6 +31,9 @@
 #include "util_string.h"
 #include "chuck_symbol.h"
 
+#include "MarkdownOutput.h"
+
+
 using namespace std;
 
 static bool g_vm_on = false;
@@ -56,6 +59,8 @@ int main(int argc, const char ** argv)
 {
     start_vm();
     
+    Output * output = new MarkdownOutput(stdout);
+    
     // iterate through types
     
     Chuck_Env * env = Chuck_Env::instance();
@@ -69,78 +74,84 @@ int main(int argc, const char ** argv)
         if(skip(type->name)) continue;
         
         // class name
-        fprintf(stdout, "## %s\n", type->name.c_str());
-        
-        // type heirarchy
-        Chuck_Type * parent = type->parent;
-        if(parent != NULL) fprintf(stdout, "####");
-        while(parent != NULL)
-        {
-            fprintf(stdout, "< %s ", parent->name.c_str());
-            parent = parent->parent;
-        }
-        if(type->parent != NULL) fprintf(stdout, "\n");
-        
+//        fprintf(stdout, "## %s\n", type->name.c_str());
+        output->begin_class(type);
+                
         if(type->info)
         {
-            fprintf(stdout, "### member functions\n");
-            
-            map<string, int> member_names;
+            map<string, int> func_names;
             vector<Chuck_Func *> funcs;
             type->info->get_funcs(funcs);
+            
+            vector<Chuck_Func *> mfuncs;
+            vector<Chuck_Func *> sfuncs;
+            vector<Chuck_Value *> mvars;
+            vector<Chuck_Value *> svars;
+
             for(vector<Chuck_Func *>::iterator f = funcs.begin(); f != funcs.end(); f++)
             {
                 Chuck_Func * func = *f;
                 
-                if(member_names.count(func->name))
+                if(func_names.count(func->name))
                     continue;
-                member_names[func->name] = 1;
+                func_names[func->name] = 1;
                 
-                if(func && func->def)
+                if(func->def->static_decl == ae_key_static)
+                    sfuncs.push_back(func);
+                else
+                    mfuncs.push_back(func);
+            }
+            
+            if(sfuncs.size())
+            {
+                output->begin_static_member_funcs();
+                
+                for(vector<Chuck_Func *>::iterator f = sfuncs.begin(); f != sfuncs.end(); f++)
                 {
-                    // return type
-                    fprintf(stdout, "*%s", func->def->ret_type->name.c_str());
-                    for(int i = 0; i < func->def->ret_type->array_depth; i++)
-                        fprintf(stdout, "\\[\\]");
-                    fprintf(stdout, "* ");
+                    Chuck_Func * func = *f;
                     
-                    // function name
-                    fprintf(stdout, "**%s**(", S_name(func->def->name));
+                    output->begin_static_member_func(func);
                     
                     // argument list
                     a_Arg_List args = func->def->arg_list;
                     while(args != NULL)
                     {
-                        // argument type
-                        fprintf(stdout, "*%s", args->type->name.c_str());
-                        for(int i = 0; i < args->type->array_depth; i++)
-                            fprintf(stdout, "\\[\\]");
-                        fprintf(stdout, "* ");
-                        
-                        // argument name
-                        fprintf(stdout, "%s", S_name(args->var_decl->xid));
-                        
-                        if(args->next != NULL)
-                            fprintf(stdout, ", ");
+                        output->func_arg(args);
                         args = args->next;
                     }
                     
-                    fprintf(stdout, ")");
-                    
-                    //fprintf(stdout, " [%lu %s]", func->vt_index, func->name.c_str());
-                    
-                    fprintf(stdout, "\n\n");
+                    output->end_static_member_func();
                 }
-//                else if(func)
-//                {
-//                    fprintf(stdout, "%s\n", func->name.c_str());
-//                }
+                
+                output->end_static_member_funcs();
+            }
+        
+            if(mfuncs.size())
+            {
+                output->begin_member_funcs();
+                
+                for(vector<Chuck_Func *>::iterator f = mfuncs.begin(); f != mfuncs.end(); f++)
+                {
+                    Chuck_Func * func = *f;
+                    
+                    output->begin_member_func(func);
+                    
+                    // argument list
+                    a_Arg_List args = func->def->arg_list;
+                    while(args != NULL)
+                    {
+                        output->func_arg(args);
+                        args = args->next;
+                    }
+                    
+                    output->end_member_func();
+                }
             }
         }
-        
-        fprintf(stdout, "- - -\n");
-    }
     
+        output->end_class();
+    }
+
     stop_vm();
     
     return 0;
