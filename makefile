@@ -2,7 +2,7 @@
 CHUCK_SRC_DIR=chuck/src
 
 .PHONY: osx linux-oss linux-jack linux-alsa win32 osx-rl
-osx linux-oss linux-jack linux-alsa win32 osx-rl: ckdoc
+osx linux-oss linux-jack linux-alsa win32 osx-rl: ckdoc list_ugens list_classes
 
 ifneq ($(CK_TARGET),)
 .DEFAULT_GOAL:=$(CK_TARGET)
@@ -62,19 +62,29 @@ uana_xform.cpp uana_extract.cpp
 CSRCS:=$(addprefix $(CHUCK_SRC_DIR)/,$(CSRCS))
 CXXSRCS:=$(addprefix $(CHUCK_SRC_DIR)/,$(CXXSRCS))
 
-CXXSRCS+=ckdoc.cpp
+CXXSRCS+=ckdoc.cpp list_ugens.cpp list_classes.cpp
 
 COBJS=$(CSRCS:.c=.o)
 CXXOBJS=$(CXXSRCS:.cpp=.o)
 OBJS=$(COBJS) $(CXXOBJS)
+
+CKDOC_OBJS=$(filter-out list_ugens.o list_classes.o,$(OBJS))
+LISTUGENS_OBJS=$(filter-out ckdoc.o list_classes.o,$(OBJS))
+LISTCLASSES_OBJS=$(filter-out list_ugens.o ckdoc.o,$(OBJS))
 
 # remove -arch options
 CFLAGSDEPEND=$(CFLAGS)
 
 -include $(OBJS:.o=.d)
 
-ckdoc: $(OBJS)
-	$(LD) -o ckdoc $(OBJS) $(LDFLAGS)
+ckdoc: $(CKDOC_OBJS)
+	$(LD) -o ckdoc $(CKDOC_OBJS) $(LDFLAGS)
+
+list_ugens: $(LISTUGENS_OBJS)
+	$(LD) -o list_ugens $(LISTUGENS_OBJS) $(LDFLAGS)
+
+list_classes: $(LISTCLASSES_OBJS)
+	$(LD) -o list_classes $(LISTCLASSES_OBJS) $(LDFLAGS)
 
 chuck.tab.c chuck.tab.h: $(CHUCK_SRC_DIR)/chuck.y
 	$(YACC) -dv -b $(CHUCK_SRC_DIR)/chuck $(CHUCK_SRC_DIR)/chuck.y
