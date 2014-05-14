@@ -38,7 +38,7 @@ using namespace std;
 
 static bool g_vm_on = false;
 
-t_CKBOOL start_vm();
+t_CKBOOL start_vm(int argc, const char *argv[]);
 t_CKBOOL stop_vm();
 
 bool skip(string &name)
@@ -57,7 +57,7 @@ bool skip(string &name)
 
 int main(int argc, const char ** argv)
 {
-    start_vm();
+    start_vm(argc, argv);
     
     Output * output = new HTMLOutput(stdout);
     
@@ -203,7 +203,7 @@ int main(int argc, const char ** argv)
 // name: start_vm()
 // desc: ...
 //-----------------------------------------------------------------------------
-t_CKBOOL start_vm()
+t_CKBOOL start_vm(int argc, const char *argv[])
 {
     char buffer[1024];
     time_t t;
@@ -233,6 +233,67 @@ t_CKBOOL start_vm()
         t_CKBOOL block = FALSE;
         t_CKUINT output_channels = 2;
         t_CKUINT input_channels = 2;
+        t_CKBOOL chugin_load = TRUE;
+        
+        // list of search pathes (added 1.3.0.0)
+        std::list<std::string> dl_search_path;
+        // initial chug-in path (added 1.3.0.0)
+        std::string initial_chugin_path;
+        // if set as environment variable (added 1.3.0.0)
+        if( getenv( g_chugin_path_envvar ) )
+        {
+            // get it from the env var
+            initial_chugin_path = getenv( g_chugin_path_envvar );
+        }
+        else
+        {
+            // default it
+            initial_chugin_path = g_default_chugin_path;
+        }
+        // parse the colon list into STL list (added 1.3.0.0)
+        parse_path_list( initial_chugin_path, dl_search_path );
+        // list of individually named chug-ins (added 1.3.0.0)
+        std::list<std::string> named_dls;
+        
+        for(int i = 1; i < argc; i++)
+        {
+            if( !strncmp(argv[i], "--chugin-load:", sizeof("--chugin-load:")-1) )
+            {
+                // get the rest
+                string arg = argv[i]+sizeof("--chugin-load:")-1;
+                if( arg == "off" ) chugin_load = 0;
+                else if( arg == "auto" ) chugin_load = 1;
+                else
+                {
+                    // error
+                    fprintf( stderr, "[chuck]: invalid arguments for '--chugin-load'...\n" );
+                    fprintf( stderr, "[chuck]: ... (looking for :auto or :off)\n" );
+                    exit( 1 );
+                }
+            }
+            // (added 1.3.0.0)
+            else if( !strncmp(argv[i], "--chugin-path:", sizeof("--chugin-path:")-1) )
+            {
+                // get the rest
+                dl_search_path.push_back( argv[i]+sizeof("--chugin-path:")-1 );
+            }
+            // (added 1.3.0.0)
+            else if( !strncmp(argv[i], "-G", sizeof("-G")-1) )
+            {
+                // get the rest
+                dl_search_path.push_back( argv[i]+sizeof("-G")-1 );
+            }
+            // (added 1.3.0.0)
+            else if( !strncmp(argv[i], "--chugin:", sizeof("--chugin:")-1) )
+            {
+                named_dls.push_back(argv[i]+sizeof("--chugin:")-1);
+            }
+            // (added 1.3.0.0)
+            else if( !strncmp(argv[i], "-g", sizeof("-g")-1) )
+            {
+                named_dls.push_back(argv[i]+sizeof("-g")-1);
+            }
+        }
         
         // set watchdog
         g_do_watchdog = FALSE;
@@ -256,37 +317,24 @@ t_CKBOOL start_vm()
         // allocate the compiler
         g_compiler = new Chuck_Compiler;
         
-        
-        // list of search pathes (added 1.3.0.0)
-        std::list<std::string> library_paths;
-        // initial chug-in path (added 1.3.0.0)
-        std::string initial_chugin_path;
-        // if set as environment variable (added 1.3.0.0)
-        if( getenv( g_chugin_path_envvar ) )
+        if(!chugin_load)
         {
-            // get it from the env var
-            initial_chugin_path = getenv( g_chugin_path_envvar );
+            dl_search_path.clear();
+            named_dls.clear();
         }
         else
         {
-            // default it
-            initial_chugin_path = g_default_chugin_path;
+            // normalize paths
+            for(std::list<std::string>::iterator i = dl_search_path.begin();
+                i != dl_search_path.end(); i++)
+                *i = expand_filepath(*i);
+            for(std::list<std::string>::iterator j = named_dls.begin();
+                j != named_dls.end(); j++)
+                *j = expand_filepath(*j);
         }
-        
-        // parse the colon list into STL list (added 1.3.0.0)
-        parse_path_list( initial_chugin_path, library_paths );
-        
-        std::list<std::string> named_chugins;
-        // normalize paths
-        for(std::list<std::string>::iterator i = library_paths.begin();
-            i != library_paths.end(); i++)
-            *i = expand_filepath(*i);
-        for(std::list<std::string>::iterator j = named_chugins.begin();
-            j != named_chugins.end(); j++)
-            *j = expand_filepath(*j);
-        
+                
         // initialize the compiler
-        g_compiler->initialize( g_vm, library_paths, named_chugins );
+        g_compiler->initialize( g_vm, dl_search_path, named_dls );
         // enable dump
         g_compiler->emitter->dump = FALSE;
         // set auto depend
@@ -301,6 +349,9 @@ t_CKBOOL start_vm()
             return FALSE;
         }
         
+        // here we would normally preload chuck files
+        // but that is disabled in doc mode
+        
         // reset the parser
         reset_parse();
         
@@ -310,41 +361,7 @@ t_CKBOOL start_vm()
         // whether or not chug should be enabled (added 1.3.0.0)
         EM_log( CK_LOG_SEVERE, "pre-loading ChucK libs..." );
         EM_pushlog();
-        
-        // iterate over list of ck files that the compiler found
-        for( std::list<std::string>::iterator j = g_compiler->m_cklibs_to_preload.begin();
-            j != g_compiler->m_cklibs_to_preload.end(); j++)
-        {
-            // the filename
-            std::string filename = *j;
-            
-            // log
-            EM_log( CK_LOG_SEVERE, "preloading '%s'...", filename.c_str() );
-            // push indent
-            EM_pushlog();
-            
-            // SPENCERTODO: what to do for full path
-            std::string full_path = filename;
-            
-            // parse, type-check, and emit
-            if( g_compiler->go( filename, NULL, NULL, full_path ) )
-            {
-                // TODO: how to compilation handle?
-                //return 1;
                 
-                // get the code
-                code = g_compiler->output();
-                // name it - TODO?
-                // code->name += string(argv[i]);
-                
-                // spork it
-                shred = g_vm->spork( code, NULL );
-            }
-            
-            // pop indent
-            EM_poplog();
-        }
-        
         // clear the list of chuck files to preload
         g_compiler->m_cklibs_to_preload.clear();
         

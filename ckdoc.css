@@ -2,7 +2,8 @@
 body
 {
     margin: 2em 10em 2em 2em;
-    font-family: "Helvetica";
+    font-family: Helvetica;
+	font-size: 14px;
 }
 
 .class
@@ -11,17 +12,84 @@ body
     padding: 0.025em 0.5em 0.25em 1em;
 }
 
-.typename
+.class_title
 {
-    font-style: italic;
+    font-family: Menlo, Monaco, Courier;
+	font-size: 18px;
 }
 
-.name
+.class_hierarchy
 {
-    font-weight: bold;
+    font-family: Menlo, Monaco, Courier;
+	font-size: 14px;
+}
+
+.class_section_header
+{
+	
+}
+
+.class_description
+{
+    font-family: Helvetica;
+	font-size: 12px;
+}
+
+.empty_class_description
+{
+    font-family: Helvetica;
+	font-size: 12px;
+	font-style: italic;
+	color: grey;
 }
 
 .members
 {
+    font-family: Menlo, Monaco, Courier;
+	font-size: 12px;
     padding-left: 3em;
 }
+
+.member
+{
+	margin-bottom: 0.5em;
+}
+
+.member_description
+{
+    font-family: Helvetica;
+	font-size: 10px;
+	margin-bottom: 1.5em;
+}
+
+.empty_member_description
+{
+    font-family: Helvetica;
+	font-size: 12px;
+	font-style: italic;
+	color: grey;
+	margin-top: 0;
+	margin-bottom: 1.5em;
+}
+
+.typename
+{
+	color: blue;
+}
+
+.classname
+{
+	color: #800023;
+}
+
+.ugenname
+{
+	color: #A200EC;
+}
+
+.membername
+{
+    font-weight: bold;
+}
+
+

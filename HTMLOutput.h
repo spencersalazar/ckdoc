@@ -26,7 +26,8 @@ class HTMLOutput : public Output
 {
 public:
     HTMLOutput(FILE * output = stdout) :
-    m_output(output)
+    m_output(output),
+    m_func(NULL)
     { }
     
     void begin()
@@ -46,18 +47,25 @@ public:
     void begin_class(Chuck_Type * type)
     {
         fprintf(m_output, "<div class=\"class\">\n");
-        fprintf(m_output, "<a name=\"%s\" /><h2 name=\"%s\">%s</h2>\n",
+        fprintf(m_output, "<a name=\"%s\" /><h2 class=\"class_title\" name=\"%s\">%s</h2>\n",
                 type->name.c_str(), type->name.c_str(), type->name.c_str());
         
         // type heirarchy
         Chuck_Type * parent = type->parent;
-        if(parent != NULL) fprintf(m_output, "<h4>");
+        if(parent != NULL) fprintf(m_output, "<h4 class=\"class_hierarchy\">");
         while(parent != NULL)
         {
-            fprintf(m_output, ": <a href=\"#%s\">%s</a> ", parent->name.c_str(), parent->name.c_str());
+            fprintf(m_output, ": <a href=\"#%s\" class=\"%s\">%s</a> ", 
+                    parent->name.c_str(), class_for_type(parent), parent->name.c_str());
             parent = parent->parent;
         }
         if(type->parent != NULL) fprintf(m_output, "</h4>\n");
+        
+        if(type->doc.size() > 0)
+            fprintf(m_output, "<p class=\"class_description\">%s</p>\n", 
+                    type->doc.c_str());
+        else
+            fprintf(m_output, "<p class=\"empty_class_description\">No description available</p>\n");
     }
     
     void end_class()
@@ -67,7 +75,7 @@ public:
     
     void begin_static_member_vars()
     {
-        fprintf(m_output, "<h3>static member variables</h3>\n<div class=\"members\">\n");
+        fprintf(m_output, "<h3 class=\"class_section_header\">static member variables</h3>\n<div class=\"members\">\n");
     }
     
     void end_static_member_vars()
@@ -77,7 +85,7 @@ public:
     
     void begin_member_vars()
     {
-        fprintf(m_output, "<h3>member variables</h3>\n<div class=\"members\">\n");
+        fprintf(m_output, "<h3 class=\"class_section_header\">member variables</h3>\n<div class=\"members\">\n");
     }
     
     void end_member_vars()
@@ -88,7 +96,7 @@ public:
     
     void begin_static_member_funcs()
     {
-        fprintf(m_output, "<h3>static member functions</h3>\n<div class=\"members\">\n");
+        fprintf(m_output, "<h3 class=\"class_section_header\">static member functions</h3>\n<div class=\"members\">\n");
     }
     
     void end_static_member_funcs()
@@ -98,7 +106,7 @@ public:
     
     void begin_member_funcs()
     {
-        fprintf(m_output, "<h3>member functions</h3>\n<div class=\"members\">\n");
+        fprintf(m_output, "<h3 class=\"class_section_header\">member functions</h3>\n<div class=\"members\">\n");
     }
     
     void end_member_funcs()
@@ -109,65 +117,106 @@ public:
     
     void static_member_var(Chuck_Value * var)
     {
-        fprintf(m_output, "<p><span class=\"typename\">%s", var->type->name.c_str());
+        fprintf(m_output, "<p class=\"member\"><span class=\"%s\">%s", 
+                class_for_type(var->type), var->type->name.c_str());
         for(int i = 0; i < var->type->array_depth; i++)
             fprintf(m_output, "[]");
         fprintf(m_output, "</span> ");
         
         // function name
-        fprintf(m_output, "<span class=\"name\">%s</span></p>", var->name.c_str());
+        fprintf(m_output, "<span class=\"membername\">%s</span></p>", var->name.c_str());
+        
+        if(var->doc.size() > 0)
+            fprintf(m_output, "<p class=\"member_description\">%s</p>\n", 
+                    var->doc.c_str());
+        else
+            fprintf(m_output, "<p class=\"empty_member_description\">No description available</p>\n");
     }
     
     void member_var(Chuck_Value * var)
     {
-        fprintf(m_output, "<p><span class=\"typename\">%s", var->type->name.c_str());
+        fprintf(m_output, "<p class=\"member\"><span class=\"%s\">%s", 
+                class_for_type(var->type), var->type->name.c_str());
         for(int i = 0; i < var->type->array_depth; i++)
             fprintf(m_output, "[]");
         fprintf(m_output, "</span> ");
         
         // function name
-        fprintf(m_output, "<span class=\"name\">%s</span></p>", var->name.c_str());
+        fprintf(m_output, "<span class=\"membername\">%s</span></p>", var->name.c_str());
+        
+        if(var->doc.size() > 0)
+            fprintf(m_output, "<p class=\"member_description\">%s</p>\n", 
+                    var->doc.c_str());
+        else
+            fprintf(m_output, "<p class=\"empty_member_description\">No description available</p>\n");
     }
     
     void begin_static_member_func(Chuck_Func * func)
     {
         // return type
-        fprintf(m_output, "<p><span class=\"typename\">%s", func->def->ret_type->name.c_str());
+        fprintf(m_output, "<p class=\"member\"><span class=\"%s\">%s", 
+                class_for_type(func->def->ret_type),
+                func->def->ret_type->name.c_str());
         for(int i = 0; i < func->def->ret_type->array_depth; i++)
             fprintf(m_output, "[]");
         fprintf(m_output, "</span> ");
         
         // function name
-        fprintf(m_output, "<span class=\"name\">%s</span>(", S_name(func->def->name));
+        fprintf(m_output, "<span class=\"membername\">%s</span>(", S_name(func->def->name));        
         
+        m_func = func;
     }
     
     void end_static_member_func()
     {
         fprintf(m_output, ")</p>\n");
+        
+        if(m_func->doc.size() > 0)
+            fprintf(m_output, "<p class=\"member_description\">%s</p>\n", 
+                    m_func->doc.c_str());
+        else
+            fprintf(m_output, "<p class=\"empty_member_description\">No description available</p>\n");
+        
+        m_func = NULL;
     }
     
     void begin_member_func(Chuck_Func * func)
     {
         // return type
-        fprintf(m_output, "<p><span class=\"typename\">%s", func->def->ret_type->name.c_str());
+        fprintf(m_output, "<p class=\"member\"><span class=\"%s\">%s", 
+                class_for_type(func->def->ret_type), 
+                func->def->ret_type->name.c_str());
+        
         for(int i = 0; i < func->def->ret_type->array_depth; i++)
             fprintf(m_output, "[]");
         fprintf(m_output, "</span> ");
         
         // function name
-        fprintf(m_output, "<span class=\"name\">%s</span>(", S_name(func->def->name));
+        fprintf(m_output, "<span class=\"membername\">%s</span>(", S_name(func->def->name));
+        
+        m_func = func;
     }
     
     void end_member_func()
     {
         fprintf(m_output, ")</p>\n");
+        
+        if(m_func->doc.size() > 0)
+            fprintf(m_output, "<p class=\"member_description\">%s</p>\n", 
+                    m_func->doc.c_str());
+        else
+            fprintf(m_output, "<p class=\"empty_member_description\">No description available</p>\n");
+            
+        
+        m_func = NULL;
     }
     
     void func_arg(a_Arg_List arg)
     {
         // argument type
-        fprintf(m_output, "<span class=\"typename\">%s", arg->type->name.c_str());
+        fprintf(m_output, "<span class=\"%s\">%s", 
+                class_for_type(arg->type), arg->type->name.c_str());
+            
         for(int i = 0; i < arg->type->array_depth; i++)
             fprintf(m_output, "[]");
         fprintf(m_output, "</span> ");
@@ -181,5 +230,18 @@ public:
     
 private:
     FILE * m_output;
+    Chuck_Func *m_func;
+    
+    bool isugen(Chuck_Type *type) { return type->ugen_info != NULL; }
+    
+    const char *class_for_type(Chuck_Type *type)
+    {
+        if(isprim(type))
+            return "typename";
+        else if(isugen(type))
+            return "ugenname";
+        else
+            return "classname";
+    }
 };
 
