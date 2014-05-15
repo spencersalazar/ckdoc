@@ -32,7 +32,7 @@ body
 .class_description
 {
     font-family: Helvetica;
-	font-size: 12px;
+	font-size: 14px;
 }
 
 .empty_class_description
@@ -46,20 +46,35 @@ body
 .members
 {
     font-family: Menlo, Monaco, Courier;
-	font-size: 12px;
-    padding-left: 3em;
+	font-size: 13px;
+    padding-left: 2em;
 }
 
 .member
 {
+    padding-left: 0.75em;
+    padding-top: 0.75em;
+    border-top: 4px solid #fcfcfc;
+    border-left: 4px solid #fcfcfc;
+    
+    padding-bottom: 0.25em;
+    margin-bottom: 1.5em;
+    
+    margin-right: 4.5em;
+    padding-right: 0;
+}
+
+.member_declaration
+{
+    margin-top: 0;
 	margin-bottom: 0.5em;
 }
 
 .member_description
 {
     font-family: Helvetica;
-	font-size: 10px;
-	margin-bottom: 1.5em;
+	font-size: 14px;
+	margin-top: 0;
 }
 
 .empty_member_description
@@ -69,7 +84,6 @@ body
 	font-style: italic;
 	color: grey;
 	margin-top: 0;
-	margin-bottom: 1.5em;
 }
 
 .typename

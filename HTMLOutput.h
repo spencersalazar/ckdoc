@@ -117,7 +117,7 @@ public:
     
     void static_member_var(Chuck_Value * var)
     {
-        fprintf(m_output, "<p class=\"member\"><span class=\"%s\">%s", 
+        fprintf(m_output, "<div class=\"member\">\n<p class=\"member_declaration\"><span class=\"%s\">%s", 
                 class_for_type(var->type), var->type->name.c_str());
         for(int i = 0; i < var->type->array_depth; i++)
             fprintf(m_output, "[]");
@@ -135,7 +135,7 @@ public:
     
     void member_var(Chuck_Value * var)
     {
-        fprintf(m_output, "<p class=\"member\"><span class=\"%s\">%s", 
+        fprintf(m_output, "<div class=\"member\">\n<p class=\"member_declaration\"><span class=\"%s\">%s", 
                 class_for_type(var->type), var->type->name.c_str());
         for(int i = 0; i < var->type->array_depth; i++)
             fprintf(m_output, "[]");
@@ -154,7 +154,7 @@ public:
     void begin_static_member_func(Chuck_Func * func)
     {
         // return type
-        fprintf(m_output, "<p class=\"member\"><span class=\"%s\">%s", 
+        fprintf(m_output, "<div class=\"member\">\n<p class=\"member_declaration\"><span class=\"%s\">%s", 
                 class_for_type(func->def->ret_type),
                 func->def->ret_type->name.c_str());
         for(int i = 0; i < func->def->ret_type->array_depth; i++)
@@ -177,13 +177,15 @@ public:
         else
             fprintf(m_output, "<p class=\"empty_member_description\">No description available</p>\n");
         
+        fprintf(m_output, "</div>\n");
+        
         m_func = NULL;
     }
     
     void begin_member_func(Chuck_Func * func)
     {
         // return type
-        fprintf(m_output, "<p class=\"member\"><span class=\"%s\">%s", 
+        fprintf(m_output, "<div class=\"member\">\n<p class=\"member_declaration\"><span class=\"%s\">%s", 
                 class_for_type(func->def->ret_type), 
                 func->def->ret_type->name.c_str());
         
@@ -206,7 +208,8 @@ public:
                     m_func->doc.c_str());
         else
             fprintf(m_output, "<p class=\"empty_member_description\">No description available</p>\n");
-            
+        
+        fprintf(m_output, "</div>\n");
         
         m_func = NULL;
     }
