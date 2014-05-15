@@ -41,6 +41,17 @@ static bool g_vm_on = false;
 t_CKBOOL start_vm(int argc, const char *argv[]);
 t_CKBOOL stop_vm();
 
+bool comp_func(Chuck_Func *a, Chuck_Func *b)
+{
+    return a->name < b->name;
+}
+
+bool comp_value(Chuck_Value *a, Chuck_Value *b)
+{
+    return a->name < b->name;
+}
+
+
 bool skip(string &name)
 {
     if(name == "void" ||
@@ -128,6 +139,11 @@ int main(int argc, const char ** argv)
                 else
                     mfuncs.push_back(func);
             }
+            
+            sort(svars.begin(), svars.end(), comp_value);
+            sort(mvars.begin(), mvars.end(), comp_value);
+            sort(sfuncs.begin(), sfuncs.end(), comp_func);
+            sort(mfuncs.begin(), mfuncs.end(), comp_func);
             
             if(svars.size())
             {

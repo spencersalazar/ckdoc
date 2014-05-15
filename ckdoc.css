@@ -51,16 +51,17 @@ body
 
 .member
 {
-    margin-left: 1em;
-    padding-left: 1.25em;
-    padding-top: 1.25em;
+    margin-left: 0em;
+    padding-left: 0.85em;
+    padding-top: 0.85em;
     border-top: 4px solid #fcfcfc;
     border-left: 4px solid #fcfcfc;
     
-    padding-bottom: 0.25em;
+    padding-bottom: 0.85em;
+    padding-left: 0.85em;
     margin-bottom: 1.5em;
     
-    margin-right: 4.5em;
+    margin-right: 4em;
     padding-right: 0;
 }
 
@@ -75,6 +76,7 @@ body
     font-family: Helvetica;
 	font-size: 14px;
 	margin-top: 0;
+    margin-bottom: 0;
 }
 
 .empty_member_description
@@ -84,6 +86,7 @@ body
 	font-style: italic;
 	color: grey;
 	margin-top: 0;
+    margin-bottom: 0;
 }
 
 .typename
