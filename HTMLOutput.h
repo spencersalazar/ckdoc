@@ -131,6 +131,8 @@ public:
                     var->doc.c_str());
         else
             fprintf(m_output, "<p class=\"empty_member_description\">No description available</p>\n");
+        
+        fprintf(m_output, "</div>\n");
     }
     
     void member_var(Chuck_Value * var)
@@ -149,6 +151,8 @@ public:
                     var->doc.c_str());
         else
             fprintf(m_output, "<p class=\"empty_member_description\">No description available</p>\n");
+        
+        fprintf(m_output, "</div>\n");
     }
     
     void begin_static_member_func(Chuck_Func * func)

@@ -101,10 +101,10 @@ list_ugens: $(LISTUGENS_OBJS)
 list_classes: $(LISTCLASSES_OBJS)
 	$(LD) -o list_classes $(LISTCLASSES_OBJS) $(LDFLAGS)
 
-chuck.tab.c chuck.tab.h: $(CHUCK_SRC_DIR)/chuck.y
+$(CHUCK_SRC_DIR)/chuck.tab.c $(CHUCK_SRC_DIR)/chuck.tab.h: $(CHUCK_SRC_DIR)/chuck.y
 	$(YACC) -dv -b $(CHUCK_SRC_DIR)/chuck $(CHUCK_SRC_DIR)/chuck.y
 
-chuck.yy.c: chuck.lex
+$(CHUCK_SRC_DIR)/chuck.yy.c: $(CHUCK_SRC_DIR)/chuck.lex
 	$(LEX) -o$(CHUCK_SRC_DIR)/chuck.yy.c $(CHUCK_SRC_DIR)/chuck.lex
 
 $(COBJS): %.o: %.c
