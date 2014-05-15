@@ -76,7 +76,7 @@ int main(int argc, const char ** argv)
         if(skip(type->name)) continue;
         
         // class name
-//        fprintf(stdout, "## %s\n", type->name.c_str());
+        // fprintf(stderr, "## %s\n", type->name.c_str());
         output->begin_class(type);
                 
         if(type->info)
@@ -91,10 +91,14 @@ int main(int argc, const char ** argv)
             vector<Chuck_Func *> sfuncs;
             vector<Chuck_Value *> mvars;
             vector<Chuck_Value *> svars;
-
+            
+            // fprintf(stderr, "### %lu vars\n", vars.size());
+            
             for(vector<Chuck_Value *>::iterator v = vars.begin(); v != vars.end(); v++)
             {
                 Chuck_Value * value = *v;
+                                
+                if(value == NULL) continue;
                 
                 if(value->name.length() == 0)
                     continue;
@@ -112,6 +116,8 @@ int main(int argc, const char ** argv)
             for(vector<Chuck_Func *>::iterator f = funcs.begin(); f != funcs.end(); f++)
             {
                 Chuck_Func * func = *f;
+                
+                if(func == NULL) continue;
                 
                 if(func_names.count(func->name))
                     continue;

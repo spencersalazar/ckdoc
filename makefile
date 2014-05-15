@@ -17,7 +17,7 @@ CC=gcc
 CXX=gcc
 LD=g++
 
-CFLAGS+= -I$(CHUCK_SRC_DIR)
+CFLAGS+= -I$(CHUCK_SRC_DIR) -DCK_DOC
 
 ifneq ($(CHUCK_DEBUG),)
 CFLAGS+= -g
