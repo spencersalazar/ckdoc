@@ -1,9 +1,31 @@
 
 body
 {
-    margin: 2em 10em 2em 2em;
+    margin: 2em 2em 2em 2em;
     font-family: Helvetica;
 	font-size: 14px;
+}
+
+.toc
+{
+    float: left;
+    background-color: #eee;
+    padding: 0.25em 0.5em 1em 0.75em;
+    margin: 0;
+    width: 6em;
+}
+
+.toc_class
+{
+    font-size: 10px;
+    margin-top: 0.5em;
+    margin-bottom: 0.25em;
+}
+
+.classes
+{
+    margin-left: 9em;
+    margin-right: 5em;
 }
 
 .class
@@ -109,4 +131,15 @@ body
     font-weight: bold;
 }
 
+.top_link
+{
+    text-align: right;
+    margin-top: 2em;
+    margin-right: 1em;
+}
+
+.top_link a
+{
+    text-decoration: none;
+}
 

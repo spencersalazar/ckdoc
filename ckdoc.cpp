@@ -61,6 +61,8 @@ bool skip(string &name)
        name == "dur" ||
        name == "complex" ||
        name == "polar" ||
+       name == "Class" ||
+       name == "Thread" ||
        name == "@function")
         return true;
     return false;
@@ -79,6 +81,21 @@ int main(int argc, const char ** argv)
     Chuck_Env * env = Chuck_Env::instance();
     vector<Chuck_Type *> types;
     env->global()->get_types(types);
+    
+    output->begin_toc();
+    
+    for(vector<Chuck_Type *>::iterator t = types.begin(); t != types.end(); t++)
+    {
+        Chuck_Type * type = *t;
+        
+        if(skip(type->name)) continue;
+        
+        output->toc_class(type);
+    }
+    
+    output->end_toc();
+    
+    output->begin_classes();
     
     for(vector<Chuck_Type *>::iterator t = types.begin(); t != types.end(); t++)
     {
@@ -212,6 +229,8 @@ int main(int argc, const char ** argv)
     
         output->end_class();
     }
+    
+    output->end_classes();
     
     output->end();
 

@@ -44,6 +44,32 @@ public:
         fprintf(m_output, "</body>\n</html>\n");
     }
     
+    void begin_toc()
+    {
+        fprintf(m_output, "<div class=\"toc\"><a id=\"toc\"/>\n");
+    }
+    
+    void toc_class(Chuck_Type * type)
+    {
+        fprintf(m_output, "<p class=\"toc_class\"><a href=\"#%s\" class=\"%s\">%s</a></p>\n", 
+                type->name.c_str(), class_for_type(type), type->name.c_str());
+    }
+    
+    void end_toc()
+    {
+        fprintf(m_output, "</div>\n");
+    }
+    
+    void begin_classes()
+    {
+        fprintf(m_output, "<div class=\"classes\">\n");
+    }
+    
+    void end_classes()
+    {
+        fprintf(m_output, "</div>\n");
+    }
+    
     void begin_class(Chuck_Type * type)
     {
         fprintf(m_output, "<div class=\"class\">\n");
@@ -70,6 +96,7 @@ public:
     
     void end_class()
     {
+        fprintf(m_output, "<p class=\"top_link\"><a href=\"#toc\">[ top ]</a></p>\n");
         fprintf(m_output, "</div>\n<hr />\n");
     }
     
