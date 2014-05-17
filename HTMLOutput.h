@@ -32,16 +32,22 @@ public:
     
     void begin()
     {
-        fprintf(m_output,
-"<html>\n\
-<link rel=\"stylesheet\" type=\"text/css\" href=\"ckdoc.css\" />\n\
-<body>\n\
-");
+        fprintf(m_output, "<html>\n");
+        fprintf(m_output, "<link rel=\"stylesheet\" type=\"text/css\" href=\"ckdoc.css\" />\n");
+        fprintf(m_output, "<body>\n");
     }
     
     void end()
     {
         fprintf(m_output, "</body>\n</html>\n");
+    }
+    
+    void title(const std::string &_title)
+    {
+        std::string title = _title;
+        if(title.length() == 0) title = "&nbsp;";
+        fprintf(m_output, "<div class=\"titleL\"><h1>ChucK Library Reference</h1></div>\n");
+        fprintf(m_output, "<div class=\"titleR\"><h1>%s</h1></div>\n", title.c_str());
     }
     
     void begin_toc()
@@ -96,7 +102,7 @@ public:
     
     void end_class()
     {
-        fprintf(m_output, "<p class=\"top_link\"><a href=\"#toc\">[ top ]</a></p>\n");
+        fprintf(m_output, "<p class=\"top_link\">[ <a href=\"#toc\">top</a> ]</p>\n");
         fprintf(m_output, "</div>\n<hr />\n");
     }
     

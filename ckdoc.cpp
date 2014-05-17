@@ -68,8 +68,38 @@ bool skip(string &name)
     return false;
 }
 
+bool isopt(const char *arg, const char *opt, const char **param = NULL)
+{
+    size_t len = strlen(opt);
+    if(strncmp(arg, opt, len) == 0)
+    {
+        if(param != NULL)
+            *param = arg+len;
+        
+        return true;
+    }
+    
+    return false;
+}
+
 int main(int argc, const char ** argv)
 {
+    list<string> type_args;
+    string title;
+    
+    const char *param;    
+    for(int i = 1; i < argc; i++)
+    {
+        if( isopt(argv[i], "--title:", &param) )
+        {
+            title = param;
+        }
+        else if(strncmp(argv[i], "-", 1) != 0 && strncmp(argv[i], "--", 2) != 0)
+        {
+            type_args.push_back(argv[i]);
+        }
+    }
+    
     start_vm(argc, argv);
     
     Output * output = new HTMLOutput(stdout);
@@ -78,9 +108,39 @@ int main(int argc, const char ** argv)
     
     output->begin();
     
+    output->title(title);
+    
     Chuck_Env * env = Chuck_Env::instance();
     vector<Chuck_Type *> types;
     env->global()->get_types(types);
+    
+    if(type_args.size())
+    {
+        vector<Chuck_Type *> newTypes;
+        
+        // filter args
+        for(list<string>::iterator i = type_args.begin(); 
+            i != type_args.end(); i++)
+        {
+            bool foundIt = false;
+            
+            for(vector<Chuck_Type *>::iterator t = types.begin(); 
+                t != types.end(); t++)
+            {
+                if((*t)->name == *i)
+                {
+                    newTypes.push_back(*t);
+                    foundIt = true;
+                    break;
+                }
+            }
+            
+            if(!foundIt)
+                fprintf(stderr, "ckdoc: warning: type '%s' not found\n", i->c_str());
+        }
+        
+        types = newTypes;
+    }
     
     output->begin_toc();
     
@@ -296,12 +356,14 @@ t_CKBOOL start_vm(int argc, const char *argv[])
         // list of individually named chug-ins (added 1.3.0.0)
         std::list<std::string> named_dls;
         
+        const char *param;
+        
         for(int i = 1; i < argc; i++)
         {
-            if( !strncmp(argv[i], "--chugin-load:", sizeof("--chugin-load:")-1) )
+            if( isopt(argv[i], "--chugin-load:", &param) )
             {
                 // get the rest
-                string arg = argv[i]+sizeof("--chugin-load:")-1;
+                string arg = param;
                 if( arg == "off" ) chugin_load = 0;
                 else if( arg == "auto" ) chugin_load = 1;
                 else
@@ -312,27 +374,23 @@ t_CKBOOL start_vm(int argc, const char *argv[])
                     exit( 1 );
                 }
             }
-            // (added 1.3.0.0)
-            else if( !strncmp(argv[i], "--chugin-path:", sizeof("--chugin-path:")-1) )
+            else if( isopt(argv[i], "--chugin-path:", &param) )
             {
                 // get the rest
-                dl_search_path.push_back( argv[i]+sizeof("--chugin-path:")-1 );
+                dl_search_path.push_back( param );
             }
-            // (added 1.3.0.0)
-            else if( !strncmp(argv[i], "-G", sizeof("-G")-1) )
+            else if( isopt(argv[i], "-G", &param) )
             {
                 // get the rest
-                dl_search_path.push_back( argv[i]+sizeof("-G")-1 );
+                dl_search_path.push_back( param );
             }
-            // (added 1.3.0.0)
-            else if( !strncmp(argv[i], "--chugin:", sizeof("--chugin:")-1) )
+            else if( isopt(argv[i], "--chugin:", &param) )
             {
-                named_dls.push_back(argv[i]+sizeof("--chugin:")-1);
+                named_dls.push_back(param);
             }
-            // (added 1.3.0.0)
-            else if( !strncmp(argv[i], "-g", sizeof("-g")-1) )
+            else if( isopt(argv[i], "-g", &param) )
             {
-                named_dls.push_back(argv[i]+sizeof("-g")-1);
+                named_dls.push_back(param);
             }
         }
         

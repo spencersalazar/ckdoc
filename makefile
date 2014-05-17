@@ -119,6 +119,12 @@ $(CXXOBJS): %.o: %.cpp
 	$(CXX) $(CFLAGS) -c $< -o $@
 	@$(CXX) -MM -MT "$@" $(CFLAGSDEPEND) $< > $*.d
 
+docs: ckdoc
+	./ckdoc --title:ChuGins \
+        ABSaturator Bitcrusher MagicSine KasFilter FIR Pan4 Pan8 Pan16 \
+        PitchTrack GVerb Mesh2D Spectacle Elliptic \
+        > ChuGins.html
+
 clean: 
 	@rm -f ckdoc *.o *.d $(OBJS) $(patsubst %.o,%.d,$(OBJS)) *~
 

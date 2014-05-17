@@ -1,14 +1,41 @@
 
 body
 {
-    margin: 2em 2em 2em 2em;
+    margin: 2em 7em 2em 2em;
     font-family: Helvetica;
 	font-size: 14px;
+}
+
+.titleL
+{
+    float: left;
+    width: 50%;
+    border-bottom: 1px solid black;
+    padding-bottom: 0.5em;
+    margin-bottom: 1.5em;
+}
+
+.titleR
+{
+    float: right;
+    text-align: right;
+    width: 50%;
+    border-bottom: 1px solid black;
+    padding-bottom: 0.5em;
+    margin-bottom: 1.5em;
+}
+
+h1
+{
+	font-size: 28px;
+    margin: 0;
 }
 
 .toc
 {
     float: left;
+/*    position: fixed;*/
+    clear: both;
     background-color: #eee;
     padding: 0.25em 0.5em 1em 0.75em;
     margin: 0;
@@ -24,8 +51,9 @@ body
 
 .classes
 {
+    clear: right;
     margin-left: 9em;
-    margin-right: 5em;
+    margin-right: 0em;
 }
 
 .class
@@ -140,6 +168,6 @@ body
 
 .top_link a
 {
-    text-decoration: none;
+    color: #44F;
 }
 
