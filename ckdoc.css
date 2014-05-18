@@ -44,7 +44,7 @@ h1
 
 .toc_class
 {
-    font-size: 10px;
+    font-size: 12px;
     margin-top: 0.5em;
     margin-bottom: 0.25em;
 }
@@ -72,6 +72,7 @@ h1
 {
     font-family: Menlo, Monaco, Courier;
 	font-size: 14px;
+    margin-right: 4em;
 }
 
 .class_section_header
@@ -83,6 +84,7 @@ h1
 {
     font-family: Helvetica;
 	font-size: 14px;
+    margin-right: 4em;
 }
 
 .empty_class_description
@@ -91,6 +93,7 @@ h1
 	font-size: 12px;
 	font-style: italic;
 	color: grey;
+    margin-right: 4em;
 }
 
 .members

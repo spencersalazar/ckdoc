@@ -120,10 +120,27 @@ $(CXXOBJS): %.o: %.cpp
 	@$(CXX) -MM -MT "$@" $(CFLAGSDEPEND) $< > $*.d
 
 docs: ckdoc
+	./ckdoc --title:"Standard Classes and Libraries" \
+        Object @array string Event Std Machine Math Shred RegEx \
+        > stdlib.html
+	./ckdoc --title:"Basic Unit Generators" \
+        UGen Gain Step Osc Phasor SinOsc TriOsc SawOsc PulseOsc SqrOsc \
+        SndBuf SndBuf2 Noise Impulse HalfRect FullRect ZeroX \
+        UGen_Multi UGen_Stereo Mix2 Pan2 Chubgraph Chugen \
+        > ugen.html
+	./ckdoc --title:"Filters" \
+        FilterStk OnePole TwoPole OneZero TwoZero PoleZero \
+        FilterBasic BPF BRF LPF HPF ResonZ BiQuad \
+        > filters.html
+	./ckdoc --title:"Input / Output" \
+        UGen Gain Step Osc Phasor SinOsc TriOsc SawOsc PulseOsc SqrOsc \
+        SndBuf Noise Impulse HalfRect FullRect ZeroX \
+        UGen_Multi UGen_Stereo Mix2 Pan2 Chubgraph Chugen \
+        > io.html
 	./ckdoc --title:ChuGins \
-        ABSaturator Bitcrusher MagicSine KasFilter FIR Pan4 Pan8 Pan16 \
+        ABSaturator AmbPan Bitcrusher MagicSine KasFilter FIR Pan4 Pan8 Pan16 \
         PitchTrack GVerb Mesh2D Spectacle Elliptic \
-        > ChuGins.html
+        > chugins.html
 
 clean: 
 	@rm -f ckdoc *.o *.d $(OBJS) $(patsubst %.o,%.d,$(OBJS)) *~
