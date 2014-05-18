@@ -3,7 +3,7 @@
 .DS_Store
 
 /ckdoc
-ckdoc.html
+*.html
 /list_objects
 /list_ugens
 /list_classes
