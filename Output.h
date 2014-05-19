@@ -27,10 +27,8 @@ class Output
 {
 public:
     
-    virtual void begin() = 0;
+    virtual void begin(const std::string &title) = 0;
     virtual void end() = 0;
-    
-    virtual void title(const std::string &title) = 0;
     
     virtual void begin_toc() = 0;
     virtual void toc_class(Chuck_Type * type) = 0;

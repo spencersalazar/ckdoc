@@ -6,6 +6,43 @@ body
 	font-size: 14px;
 }
 
+.index_group
+{
+    clear: both;
+    background-color: #eee;
+    padding: 1em 1em 1em 1em;
+    margin-bottom: 2em;
+    vertical-align: top;
+}
+
+.index_group_title
+{
+    float: left;
+    margin: 0;
+    width: 15%;
+    padding-right: 3em;
+    border-right: 4px solid #fcfcfc;
+}
+
+.index_group_classes
+{
+    padding-top: 0.15em;
+    padding-left: 1em;
+    padding-bottom: 0.15em;
+    
+    margin: 0;
+    margin-left: 20%;
+    width: 75%;
+}
+
+.index_group_classes a
+{
+    margin-right: 0.5em;
+    line-height: 1.5em;
+}
+
+.index_group_title a { color: black; }
+
 .titleL
 {
     float: left;
@@ -30,6 +67,8 @@ h1
 	font-size: 28px;
     margin: 0;
 }
+
+h1 a { color: black; text-decoration: none; }
 
 .toc
 {
@@ -149,11 +188,15 @@ h1
 
 .classname
 {
+    font-family: Menlo, Monaco, Courier;
+	font-size: 13px;
 	color: #800023;
 }
 
 .ugenname
 {
+    font-family: Menlo, Monaco, Courier;
+	font-size: 13px;
 	color: #A200EC;
 }
 
@@ -174,3 +217,4 @@ h1
     color: #44F;
 }
 
+.clear { clear: both; }

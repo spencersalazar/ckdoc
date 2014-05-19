@@ -1,0 +1,49 @@
+#!/usr/bin/python
+
+import sys
+import re
+
+groups = []
+title = ''
+current_group = None
+
+for arg in sys.argv[1:]:
+    if re.match('^--title\:(.+)', arg):
+        match = re.match('^--title\:(.+)', arg)
+        title = match.group(1)
+    elif re.match('^--group\:(.+)', arg):
+        match = re.match('^--group\:(.+)', arg)
+        current_group = {}
+        groups.append(current_group)
+        current_group['title'] = match.group(1)
+        current_group['classes'] = []
+    elif re.match('^--url\:(.+)', arg):
+        match = re.match('^--url\:(.+)', arg)
+        current_group['url'] = match.group(1)
+    else:
+        current_group['classes'].append(arg)
+
+print "<html>\n<head>\n"
+print "<title>%s</title>\n" % title
+print "<link rel=\"stylesheet\" type=\"text/css\" href=\"ckdoc.css\" />\n"
+print "</head>\n"
+print "<body>\n"
+print "<div class=\"titleL\"><h1>%s</h1></div>\n" % title
+print "<div class=\"titleR\"><h1>&nbsp;</h1></div>\n"
+
+for group in groups:
+    print "<div class=\"index_group\">\n"
+    print "<div class=\"index_group_title\">\n"
+    print "<h2><a href=\"%s\">%s</a></h2>\n" % (group['url'], group['title'])
+    print "</div>\n"
+    print "<div class=\"index_group_classes\">\n"
+    print "<p>\n"
+    for ckclass in group['classes']:
+        print "<a href=\"%s#%s\" class=\"classname\">%s</a>\n" % (group['url'], ckclass, ckclass)
+    print "</p>\n"
+    print "</div>\n"
+    print "<div class=\"clear\"></div>\n"
+    print "</div>\n"
+
+print "</body>\n</html>\n"
+

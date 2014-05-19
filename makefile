@@ -119,28 +119,57 @@ $(CXXOBJS): %.o: %.cpp
 	$(CXX) $(CFLAGS) -c $< -o $@
 	@$(CXX) -MM -MT "$@" $(CFLAGSDEPEND) $< > $*.d
 
-docs: ckdoc
-	./ckdoc --title:"Standard Classes and Libraries" \
-        Object @array string Event Std Machine Math Shred RegEx \
-        > stdlib.html
-	./ckdoc --title:"Basic Unit Generators" \
-        UGen Gain Step Osc Phasor SinOsc TriOsc SawOsc PulseOsc SqrOsc \
-        SndBuf SndBuf2 Noise Impulse HalfRect FullRect ZeroX \
-        UGen_Multi UGen_Stereo Mix2 Pan2 Chubgraph Chugen \
-        > ugen.html
-	./ckdoc --title:"Filters" \
-        FilterStk OnePole TwoPole OneZero TwoZero PoleZero \
-        FilterBasic BPF BRF LPF HPF ResonZ BiQuad \
-        > filters.html
-	./ckdoc --title:"Input / Output" \
-        UGen Gain Step Osc Phasor SinOsc TriOsc SawOsc PulseOsc SqrOsc \
-        SndBuf Noise Impulse HalfRect FullRect ZeroX \
-        UGen_Multi UGen_Stereo Mix2 Pan2 Chubgraph Chugen \
-        > io.html
-	./ckdoc --title:ChuGins \
-        ABSaturator AmbPan Bitcrusher MagicSine KasFilter FIR Pan4 Pan8 Pan16 \
-        PitchTrack GVerb Mesh2D Spectacle Elliptic \
-        > chugins.html
+
+STDLIB_TITLE=Standard Classes and Libraries
+STDLIB_CLASSES=Object @array string Event Std Machine Math Shred RegEx
+STDLIB_FILE=stdlib.html
+
+UGEN_TITLE=Basic Unit Generators
+UGEN_CLASSES=UGen Gain Step Osc Phasor SinOsc TriOsc SawOsc PulseOsc SqrOsc \
+    SndBuf SndBuf2 Noise Impulse HalfRect FullRect ZeroX \
+    UGen_Multi UGen_Stereo Mix2 Pan2 Chubgraph Chugen
+UGEN_FILE=ugen.html
+
+FILTERS_TITLE=Filters
+FILTERS_CLASSES=FilterBasic BPF BRF LPF HPF ResonZ BiQuad \
+    OnePole TwoPole OneZero TwoZero PoleZero FilterStk
+FILTERS_FILE=filter.html
+
+STK_TITLE=Synthesis Toolkit (STK)
+STK_CLASSES=Envelope ADSR Delay DelayA DelayL Echo JCRev NRev PRCRev Chorus \
+    Modulate PitShift SubNoise Blit BlitSaw BlitSquare WvIn WaveLoop WvOut \
+    StkInstrument BandedWG BlowBotl BlowHole Bowed Brass Clarinet Flute \
+    Mandolin ModalBar Moog Saxofony Shakers Sitar StifKarp VoicForm \
+    FM BeeThree FMVoices HevyMetl PercFlut Rhodey TubeBell Wurley
+STK_FILE=stk.html
+
+IO_TITLE=Input / Output
+IO_CLASSES=IO FileIO StdOut StdErr OscIn OscOut OscMsg Hid HidMsg SerialIO \
+    MidiIn MidiOut MidiMsg MidiFileIn
+IO_FILE=io.html
+
+CHUGINS_TITLE=ChuGins
+CHUGINS_CLASSES=ABSaturator AmbPan3 Bitcrusher MagicSine KasFilter FIR \
+    Pan4 Pan8 Pan16 PitchTrack GVerb Mesh2D Spectacle Elliptic
+CHUGINS_FILE=chugins.html
+
+docs: ckdoc index
+	./ckdoc --title:"$(STDLIB_TITLE)" $(STDLIB_CLASSES) > $(STDLIB_FILE)
+	./ckdoc --title:"$(UGEN_TITLE)" $(UGEN_CLASSES) > $(UGEN_FILE) 
+	./ckdoc --title:"$(FILTERS_TITLE)" $(FILTERS_CLASSES) > $(FILTERS_FILE)
+	./ckdoc --title:"$(STK_TITLE)" $(STK_CLASSES) > $(STK_FILE)
+	./ckdoc --title:"$(IO_TITLE)" $(IO_CLASSES) > $(IO_FILE)
+	./ckdoc --title:"$(CHUGINS_TITLE)" $(CHUGINS_CLASSES) > $(CHUGINS_FILE)
+
+index:
+	./gen_index --title:"ChucK Class Library Reference" \
+        --group:"$(STDLIB_TITLE)" --url:$(STDLIB_FILE) $(STDLIB_CLASSES) \
+        --group:"$(UGEN_TITLE)" --url:$(UGEN_FILE) $(UGEN_CLASSES) \
+        --group:"$(FILTERS_TITLE)" --url:$(FILTERS_FILE) $(FILTERS_CLASSES) \
+        --group:"$(STK_TITLE)" --url:$(STK_FILE) $(STK_CLASSES) \
+        --group:"$(IO_TITLE)" --url:$(IO_FILE) $(IO_CLASSES) \
+        --group:"$(CHUGINS_TITLE)" --url:$(CHUGINS_FILE) $(CHUGINS_CLASSES) \
+        > index.html
 
 clean: 
 	@rm -f ckdoc *.o *.d $(OBJS) $(patsubst %.o,%.d,$(OBJS)) *~

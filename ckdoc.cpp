@@ -94,6 +94,12 @@ int main(int argc, const char ** argv)
         {
             title = param;
         }
+        else if( isopt(argv[i], "-v", &param) )
+        {
+            t_CKINT log_level = atoi(param);
+            if(log_level == 0) log_level = CK_LOG_INFO;
+            EM_setlog(log_level);
+        }
         else if(strncmp(argv[i], "-", 1) != 0 && strncmp(argv[i], "--", 2) != 0)
         {
             type_args.push_back(argv[i]);
@@ -106,9 +112,7 @@ int main(int argc, const char ** argv)
     
     // iterate through types
     
-    output->begin();
-    
-    output->title(title);
+    output->begin(title);
     
     Chuck_Env * env = Chuck_Env::instance();
     vector<Chuck_Type *> types;

@@ -30,11 +30,18 @@ public:
     m_func(NULL)
     { }
     
-    void begin()
+    void begin(const std::string &title)
     {
+        m_title = title;
+        if(m_title.length() == 0) m_title = "&nbsp;";
+        
         fprintf(m_output, "<html>\n");
         fprintf(m_output, "<link rel=\"stylesheet\" type=\"text/css\" href=\"ckdoc.css\" />\n");
+        fprintf(m_output, "<title>%s</title>\n", m_title.c_str());
         fprintf(m_output, "<body>\n");
+        
+        fprintf(m_output, "<div class=\"titleL\"><h1><a href=\"index.html\">ChucK Class Library Reference</a></h1></div>\n");
+        fprintf(m_output, "<div class=\"titleR\"><h1>%s</h1></div>\n", m_title.c_str());
     }
     
     void end()
@@ -44,10 +51,6 @@ public:
     
     void title(const std::string &_title)
     {
-        std::string title = _title;
-        if(title.length() == 0) title = "&nbsp;";
-        fprintf(m_output, "<div class=\"titleL\"><h1>ChucK Library Reference</h1></div>\n");
-        fprintf(m_output, "<div class=\"titleR\"><h1>%s</h1></div>\n", title.c_str());
     }
     
     void begin_toc()
@@ -271,6 +274,7 @@ public:
 private:
     FILE * m_output;
     Chuck_Func *m_func;
+    std::string m_title;
     
     bool isugen(Chuck_Type *type) { return type->ugen_info != NULL; }
     
