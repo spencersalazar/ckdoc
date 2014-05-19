@@ -81,9 +81,9 @@ public:
     
     void begin_class(Chuck_Type * type)
     {
-        fprintf(m_output, "<div class=\"class\">\n");
-        fprintf(m_output, "<a name=\"%s\" /><h2 class=\"class_title\" name=\"%s\">%s</h2>\n",
-                type->name.c_str(), type->name.c_str(), type->name.c_str());
+        fprintf(m_output, "<a name=\"%s\" /><div class=\"class\">\n", type->name.c_str());
+        fprintf(m_output, "<h2 class=\"class_title\" name=\"%s\">%s</h2>\n",
+                type->name.c_str(), type->name.c_str());
         
         // type heirarchy
         Chuck_Type * parent = type->parent;
