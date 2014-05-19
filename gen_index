@@ -17,9 +17,13 @@ for arg in sys.argv[1:]:
         groups.append(current_group)
         current_group['title'] = match.group(1)
         current_group['classes'] = []
+        current_group['cssclass'] = 'classname'
     elif re.match('^--url\:(.+)', arg):
         match = re.match('^--url\:(.+)', arg)
         current_group['url'] = match.group(1)
+    elif re.match('^--cssclass\:(.+)', arg):
+        match = re.match('^--cssclass\:(.+)', arg)
+        current_group['cssclass'] = match.group(1)
     else:
         current_group['classes'].append(arg)
 
@@ -39,7 +43,7 @@ for group in groups:
     print "<div class=\"index_group_classes\">\n"
     print "<p>\n"
     for ckclass in group['classes']:
-        print "<a href=\"%s#%s\" class=\"classname\">%s</a>\n" % (group['url'], ckclass, ckclass)
+        print "<a href=\"%s#%s\" class=\"%s\">%s</a>\n" % (group['url'], ckclass, group['cssclass'], ckclass)
     print "</p>\n"
     print "</div>\n"
     print "<div class=\"clear\"></div>\n"

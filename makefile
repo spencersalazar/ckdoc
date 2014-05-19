@@ -143,6 +143,10 @@ STK_CLASSES=Envelope ADSR Delay DelayA DelayL Echo JCRev NRev PRCRev Chorus \
     FM BeeThree FMVoices HevyMetl PercFlut Rhodey TubeBell Wurley
 STK_FILE=stk.html
 
+UANA_TITLE=Unit Analyzers
+UANA_CLASSES=UAna UAnaBlob Windowing FFT IFFT DCT IDCT Centroid Flux RMS RollOff
+UANA_FILE=uana.html
+
 IO_TITLE=Input / Output
 IO_CLASSES=IO FileIO StdOut StdErr OscIn OscOut OscMsg Hid HidMsg SerialIO \
     MidiIn MidiOut MidiMsg MidiFileIn
@@ -158,17 +162,19 @@ docs: ckdoc index
 	./ckdoc --title:"$(UGEN_TITLE)" $(UGEN_CLASSES) > $(UGEN_FILE) 
 	./ckdoc --title:"$(FILTERS_TITLE)" $(FILTERS_CLASSES) > $(FILTERS_FILE)
 	./ckdoc --title:"$(STK_TITLE)" $(STK_CLASSES) > $(STK_FILE)
+	./ckdoc --title:"$(UANA_TITLE)" $(UANA_CLASSES) > $(UANA_FILE)
 	./ckdoc --title:"$(IO_TITLE)" $(IO_CLASSES) > $(IO_FILE)
 	./ckdoc --title:"$(CHUGINS_TITLE)" $(CHUGINS_CLASSES) > $(CHUGINS_FILE)
 
 index:
 	./gen_index --title:"ChucK Class Library Reference" \
         --group:"$(STDLIB_TITLE)" --url:$(STDLIB_FILE) $(STDLIB_CLASSES) \
-        --group:"$(UGEN_TITLE)" --url:$(UGEN_FILE) $(UGEN_CLASSES) \
-        --group:"$(FILTERS_TITLE)" --url:$(FILTERS_FILE) $(FILTERS_CLASSES) \
-        --group:"$(STK_TITLE)" --url:$(STK_FILE) $(STK_CLASSES) \
+        --group:"$(UGEN_TITLE)" --url:$(UGEN_FILE) --cssclass:ugenname $(UGEN_CLASSES) \
+        --group:"$(FILTERS_TITLE)" --url:$(FILTERS_FILE) --cssclass:ugenname $(FILTERS_CLASSES) \
+        --group:"$(STK_TITLE)" --url:$(STK_FILE) --cssclass:ugenname $(STK_CLASSES) \
+        --group:"$(UANA_TITLE)" --url:$(UANA_FILE) --cssclass:ugenname $(UANA_CLASSES) \
         --group:"$(IO_TITLE)" --url:$(IO_FILE) $(IO_CLASSES) \
-        --group:"$(CHUGINS_TITLE)" --url:$(CHUGINS_FILE) $(CHUGINS_CLASSES) \
+        --group:"$(CHUGINS_TITLE)" --url:$(CHUGINS_FILE) --cssclass:ugenname $(CHUGINS_CLASSES) \
         > index.html
 
 clean: 

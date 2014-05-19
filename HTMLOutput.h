@@ -280,7 +280,7 @@ private:
     
     const char *class_for_type(Chuck_Type *type)
     {
-        if(isprim(type))
+        if(isprim(type) || (type->array_depth && isprim(type->array_type)))
             return "typename";
         else if(isugen(type))
             return "ugenname";
