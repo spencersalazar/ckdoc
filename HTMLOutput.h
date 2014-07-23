@@ -170,10 +170,14 @@ public:
     {
         fprintf(m_output, "<div class=\"member\">\n<p class=\"member_declaration\"><span class=\"%s\">%s", 
                 class_for_type(var->type), var->type->name.c_str());
-        fprintf(m_output, "</span>");
-        fprintf(m_output, "<span class=\"typename\">");
-        for(int i = 0; i < var->type->array_depth; i++)
-            fprintf(m_output, "[]");
+        if(var->type->array_depth)
+        {
+            fprintf(m_output, "</span>");
+            fprintf(m_output, "<span class=\"typename\">");
+            for(int i = 0; i < var->type->array_depth; i++)
+                fprintf(m_output, "[]");
+        }
+        fprintf(m_output, "</span> ");
         
         // function name
         fprintf(m_output, "<span class=\"membername\">%s</span></p>", var->name.c_str());
@@ -191,10 +195,13 @@ public:
     {
         fprintf(m_output, "<div class=\"member\">\n<p class=\"member_declaration\"><span class=\"%s\">%s", 
                 class_for_type(var->type), var->type->name.c_str());
-        fprintf(m_output, "</span>");
-        fprintf(m_output, "<span class=\"typename\">");
-        for(int i = 0; i < var->type->array_depth; i++)
-            fprintf(m_output, "[]");
+        if(var->type->array_depth)
+        {
+            fprintf(m_output, "</span>");
+            fprintf(m_output, "<span class=\"typename\">");
+            for(int i = 0; i < var->type->array_depth; i++)
+                fprintf(m_output, "[]");
+        }
         fprintf(m_output, "</span> ");
         
         // function name
@@ -215,10 +222,13 @@ public:
         fprintf(m_output, "<div class=\"member\">\n<p class=\"member_declaration\"><span class=\"%s\">%s", 
                 class_for_type(func->def->ret_type),
                 func->def->ret_type->name.c_str());
-        fprintf(m_output, "</span>");
-        fprintf(m_output, "<span class=\"typename\">");
-        for(int i = 0; i < func->def->ret_type->array_depth; i++)
-            fprintf(m_output, "[]");
+        if(func->def->ret_type->array_depth)
+        {
+            fprintf(m_output, "</span>");
+            fprintf(m_output, "<span class=\"typename\">");
+            for(int i = 0; i < func->def->ret_type->array_depth; i++)
+                fprintf(m_output, "[]");
+        }
         fprintf(m_output, "</span> ");
         
         // function name
@@ -248,10 +258,13 @@ public:
         fprintf(m_output, "<div class=\"member\">\n<p class=\"member_declaration\"><span class=\"%s\">%s", 
                 class_for_type(func->def->ret_type), 
                 func->def->ret_type->name.c_str());
-        fprintf(m_output, "</span>");
-        fprintf(m_output, "<span class=\"typename\">");
-        for(int i = 0; i < func->def->ret_type->array_depth; i++)
-            fprintf(m_output, "[]");
+        if(func->def->ret_type->array_depth)
+        {
+            fprintf(m_output, "</span>");
+            fprintf(m_output, "<span class=\"typename\">");
+            for(int i = 0; i < func->def->ret_type->array_depth; i++)
+                fprintf(m_output, "[]");
+        }
         fprintf(m_output, "</span> ");
         
         // function name
