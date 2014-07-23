@@ -2,7 +2,7 @@
 CHUCK_SRC_DIR=chuck/src
 
 .PHONY: osx linux-oss linux-jack linux-alsa win32 osx-rl
-osx linux-oss linux-jack linux-alsa win32 osx-rl: ckdoc list_ugens list_classes
+osx linux-oss linux-jack linux-alsa win32 osx-rl: ckdoc list_ugens list_classes gen_class_css
 
 ifneq ($(CK_TARGET),)
 .DEFAULT_GOAL:=$(CK_TARGET)
@@ -76,16 +76,17 @@ CSRCS:=$(addprefix $(CHUCK_SRC_DIR)/,$(CSRCS))
 CXXSRCS:=$(addprefix $(CHUCK_SRC_DIR)/,$(CXXSRCS))
 CXXSRCS:=$(filter-out $(CHUCK_SRC_DIR)/chuck_main.cpp,$(CXXSRCS))
 LO_CSRCS:=$(addprefix $(CHUCK_SRC_DIR)/,$(LO_CSRCS))
-CXXSRCS+=ckdoc.cpp list_ugens.cpp list_classes.cpp
+CXXSRCS+=ckdoc.cpp list_ugens.cpp list_classes.cpp gen_class_css.cpp
 
 COBJS=$(CSRCS:.c=.o)
 CXXOBJS=$(CXXSRCS:.cpp=.o)
 LO_COBJS=$(LO_CSRCS:.c=.o)
 OBJS=$(COBJS) $(CXXOBJS) $(LO_COBJS)
 
-CKDOC_OBJS=$(filter-out list_ugens.o list_classes.o,$(OBJS))
-LISTUGENS_OBJS=$(filter-out ckdoc.o list_classes.o,$(OBJS))
-LISTCLASSES_OBJS=$(filter-out list_ugens.o ckdoc.o,$(OBJS))
+CKDOC_OBJS=$(filter-out list_ugens.o list_classes.o gen_class_css.o,$(OBJS))
+LISTUGENS_OBJS=$(filter-out ckdoc.o list_classes.o gen_class_css.o,$(OBJS))
+LISTCLASSES_OBJS=$(filter-out list_ugens.o ckdoc.o gen_class_css.o,$(OBJS))
+GENCLASSCSS_OBJS=$(filter-out list_ugens.o ckdoc.o list_classes.o,$(OBJS))
 
 # remove -arch options
 CFLAGSDEPEND=$(CFLAGS)
@@ -100,6 +101,9 @@ list_ugens: $(LISTUGENS_OBJS)
 
 list_classes: $(LISTCLASSES_OBJS)
 	$(LD) -o list_classes $(LISTCLASSES_OBJS) $(LDFLAGS)
+
+gen_class_css: $(GENCLASSCSS_OBJS)
+	$(LD) -o gen_class_css $(GENCLASSCSS_OBJS) $(LDFLAGS)
 
 $(CHUCK_SRC_DIR)/chuck.tab.c $(CHUCK_SRC_DIR)/chuck.tab.h: $(CHUCK_SRC_DIR)/chuck.y
 	$(YACC) -dv -b $(CHUCK_SRC_DIR)/chuck $(CHUCK_SRC_DIR)/chuck.y
@@ -164,23 +168,17 @@ CHUGINS_CLASSES=ABSaturator AmbPan3 Bitcrusher MagicSine KasFilter FIR \
 CHUGINS_FILE=chugins.html
 
 GROUPS=STDLIB UGEN FILTERS ADVUGEN STK UANA IO CHUGINS
+GROUPS_INDEX=$(foreach GROUP,$(GROUPS),--group:"$($(GROUP)_TITLE)" --url:$($(GROUP)_FILE) $($(GROUP)_CLASSES))
 
 docs: ckdoc index $(GROUPS)
+	./gen_class_css > class.css
 	./ckdoc --title:All > all.html
 
 $(GROUPS): 
 	./ckdoc --title:"$($@_TITLE)" $($@_CLASSES) > $($@_FILE)
 
 index:
-	./gen_index --title:"ChucK Class Library Reference" \
-        --group:"$(STDLIB_TITLE)" --url:$(STDLIB_FILE) $(STDLIB_CLASSES) \
-        --group:"$(UGEN_TITLE)" --url:$(UGEN_FILE) --cssclass:ugenname $(UGEN_CLASSES) \
-        --group:"$(FILTERS_TITLE)" --url:$(FILTERS_FILE) --cssclass:ugenname $(FILTERS_CLASSES) \
-        --group:"$(STK_TITLE)" --url:$(STK_FILE) --cssclass:ugenname $(STK_CLASSES) \
-        --group:"$(ADVUGEN_TITLE)" --url:$(ADVUGEN_FILE) --cssclass:ugenname $(ADVUGEN_CLASSES) \
-        --group:"$(UANA_TITLE)" --url:$(UANA_FILE) --cssclass:ugenname $(UANA_CLASSES) \
-        --group:"$(IO_TITLE)" --url:$(IO_FILE) $(IO_CLASSES) \
-        --group:"$(CHUGINS_TITLE)" --url:$(CHUGINS_FILE) --cssclass:ugenname $(CHUGINS_CLASSES) \
+	./gen_index --title:"ChucK Class Library Reference" $(GROUPS_INDEX) \
         > index.html
 
 clean: 

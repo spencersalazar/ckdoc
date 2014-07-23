@@ -37,6 +37,7 @@ public:
         
         fprintf(m_output, "<html>\n");
         fprintf(m_output, "<link rel=\"stylesheet\" type=\"text/css\" href=\"ckdoc.css\" />\n");
+        fprintf(m_output, "<link rel=\"stylesheet\" type=\"text/css\" href=\"class.css\" />\n");
         fprintf(m_output, "<title>%s</title>\n", m_title.c_str());
         fprintf(m_output, "<body>\n");
         
@@ -155,9 +156,10 @@ public:
     {
         fprintf(m_output, "<div class=\"member\">\n<p class=\"member_declaration\"><span class=\"%s\">%s", 
                 class_for_type(var->type), var->type->name.c_str());
+        fprintf(m_output, "</span>");
+        fprintf(m_output, "<span class=\"typename\">");
         for(int i = 0; i < var->type->array_depth; i++)
             fprintf(m_output, "[]");
-        fprintf(m_output, "</span> ");
         
         // function name
         fprintf(m_output, "<span class=\"membername\">%s</span></p>", var->name.c_str());
@@ -175,6 +177,8 @@ public:
     {
         fprintf(m_output, "<div class=\"member\">\n<p class=\"member_declaration\"><span class=\"%s\">%s", 
                 class_for_type(var->type), var->type->name.c_str());
+        fprintf(m_output, "</span>");
+        fprintf(m_output, "<span class=\"typename\">");
         for(int i = 0; i < var->type->array_depth; i++)
             fprintf(m_output, "[]");
         fprintf(m_output, "</span> ");
@@ -197,6 +201,8 @@ public:
         fprintf(m_output, "<div class=\"member\">\n<p class=\"member_declaration\"><span class=\"%s\">%s", 
                 class_for_type(func->def->ret_type),
                 func->def->ret_type->name.c_str());
+        fprintf(m_output, "</span>");
+        fprintf(m_output, "<span class=\"typename\">");
         for(int i = 0; i < func->def->ret_type->array_depth; i++)
             fprintf(m_output, "[]");
         fprintf(m_output, "</span> ");
@@ -228,7 +234,8 @@ public:
         fprintf(m_output, "<div class=\"member\">\n<p class=\"member_declaration\"><span class=\"%s\">%s", 
                 class_for_type(func->def->ret_type), 
                 func->def->ret_type->name.c_str());
-        
+        fprintf(m_output, "</span>");
+        fprintf(m_output, "<span class=\"typename\">");
         for(int i = 0; i < func->def->ret_type->array_depth; i++)
             fprintf(m_output, "[]");
         fprintf(m_output, "</span> ");
@@ -258,10 +265,7 @@ public:
     {
         // argument type
         fprintf(m_output, "<span class=\"%s\">%s", 
-                class_for_type(arg->type), arg->type->name.c_str());
-            
-        for(int i = 0; i < arg->type->array_depth; i++)
-            fprintf(m_output, "[]");
+                class_for_type(arg->type), arg->type->name.c_str());            
         fprintf(m_output, "</span> ");
         
         // argument name
@@ -278,14 +282,22 @@ private:
     
     bool isugen(Chuck_Type *type) { return type->ugen_info != NULL; }
     
+    std::string cssclean(std::string s)
+    {
+        for(int i = 0; i < s.length(); i++)
+        {
+            if(!isalnum(s[i])) s[i] = '_';
+        }
+        
+        return s;
+    }
+    
     const char *class_for_type(Chuck_Type *type)
     {
-        if(isprim(type) || (type->array_depth && isprim(type->array_type)))
-            return "typename";
-        else if(isugen(type))
-            return "ugenname";
-        else
-            return "classname";
+        static char buf[1024];
+        std::string name = cssclean(type->name);
+        snprintf(buf, 1024, "typename type_%s", name.c_str());
+        return buf;
     }
 };
 
