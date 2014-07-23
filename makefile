@@ -120,6 +120,7 @@ $(CXXOBJS): %.o: %.cpp
 	@$(CXX) -MM -MT "$@" $(CFLAGSDEPEND) $< > $*.d
 
 
+
 STDLIB_TITLE=Standard Classes and Libraries
 STDLIB_CLASSES=Object @array string Event Std Machine Math Shred RegEx
 STDLIB_FILE=stdlib.html
@@ -135,9 +136,14 @@ FILTERS_CLASSES=FilterBasic BPF BRF LPF HPF ResonZ BiQuad \
     OnePole TwoPole OneZero TwoZero PoleZero FilterStk
 FILTERS_FILE=filter.html
 
+ADVUGEN_TITLE=Advanced Unit Generators
+ADVUGEN_CLASSES=LiSa LiSa10 GenX Gen5 Gen7 Gen9 Gen10 Gen17 CurveTable WarpTable \
+    CNoise Dyno 
+ADVUGEN_FILE=advugen.html
+
 STK_TITLE=Synthesis Toolkit (STK)
 STK_CLASSES=Envelope ADSR Delay DelayA DelayL Echo JCRev NRev PRCRev Chorus \
-    Modulate PitShift SubNoise Blit BlitSaw BlitSquare WvIn WaveLoop WvOut \
+    Modulate PitShift SubNoise BLT Blit BlitSaw BlitSquare WvIn WaveLoop WvOut \
     StkInstrument BandedWG BlowBotl BlowHole Bowed Brass Clarinet Flute \
     Mandolin ModalBar Moog Saxofony Shakers Sitar StifKarp VoicForm \
     FM BeeThree FMVoices HevyMetl PercFlut Rhodey TubeBell Wurley
@@ -157,14 +163,13 @@ CHUGINS_CLASSES=ABSaturator AmbPan3 Bitcrusher MagicSine KasFilter FIR \
     Pan4 Pan8 Pan16 PitchTrack GVerb Mesh2D Spectacle Elliptic
 CHUGINS_FILE=chugins.html
 
-docs: ckdoc index
-	./ckdoc --title:"$(STDLIB_TITLE)" $(STDLIB_CLASSES) > $(STDLIB_FILE)
-	./ckdoc --title:"$(UGEN_TITLE)" $(UGEN_CLASSES) > $(UGEN_FILE) 
-	./ckdoc --title:"$(FILTERS_TITLE)" $(FILTERS_CLASSES) > $(FILTERS_FILE)
-	./ckdoc --title:"$(STK_TITLE)" $(STK_CLASSES) > $(STK_FILE)
-	./ckdoc --title:"$(UANA_TITLE)" $(UANA_CLASSES) > $(UANA_FILE)
-	./ckdoc --title:"$(IO_TITLE)" $(IO_CLASSES) > $(IO_FILE)
-	./ckdoc --title:"$(CHUGINS_TITLE)" $(CHUGINS_CLASSES) > $(CHUGINS_FILE)
+GROUPS=STDLIB UGEN FILTERS ADVUGEN STK UANA IO CHUGINS
+
+docs: ckdoc index $(GROUPS)
+	./ckdoc --title:All > all.html
+
+$(GROUPS): 
+	./ckdoc --title:"$($@_TITLE)" $($@_CLASSES) > $($@_FILE)
 
 index:
 	./gen_index --title:"ChucK Class Library Reference" \
@@ -172,6 +177,7 @@ index:
         --group:"$(UGEN_TITLE)" --url:$(UGEN_FILE) --cssclass:ugenname $(UGEN_CLASSES) \
         --group:"$(FILTERS_TITLE)" --url:$(FILTERS_FILE) --cssclass:ugenname $(FILTERS_CLASSES) \
         --group:"$(STK_TITLE)" --url:$(STK_FILE) --cssclass:ugenname $(STK_CLASSES) \
+        --group:"$(ADVUGEN_TITLE)" --url:$(ADVUGEN_FILE) --cssclass:ugenname $(ADVUGEN_CLASSES) \
         --group:"$(UANA_TITLE)" --url:$(UANA_FILE) --cssclass:ugenname $(UANA_CLASSES) \
         --group:"$(IO_TITLE)" --url:$(IO_FILE) $(IO_CLASSES) \
         --group:"$(CHUGINS_TITLE)" --url:$(CHUGINS_FILE) --cssclass:ugenname $(CHUGINS_CLASSES) \
