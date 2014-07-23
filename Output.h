@@ -39,6 +39,10 @@ public:
     
     virtual void begin_class(Chuck_Type * type) = 0;
     
+    virtual void begin_examples() = 0;
+    virtual void example(const std::string &name, const std::string &url) = 0;
+    virtual void end_examples() = 0;
+    
     virtual void begin_static_member_vars() = 0;
     virtual void end_static_member_vars() = 0;
     virtual void begin_member_vars() = 0;

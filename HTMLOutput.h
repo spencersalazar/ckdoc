@@ -110,6 +110,16 @@ public:
         fprintf(m_output, "</div>\n<hr />\n");
     }
     
+    void begin_examples()
+    {
+        fprintf(m_output, "<h3 class=\"class_section_header\">examples</h3><div class=\"examples\"><ul>\n");
+    }
+    
+    void end_examples()
+    {
+        fprintf(m_output, "</ul></div>\n");
+    }
+    
     void begin_static_member_vars()
     {
         fprintf(m_output, "<h3 class=\"class_section_header\">static member variables</h3>\n<div class=\"members\">\n");
@@ -151,6 +161,10 @@ public:
         fprintf(m_output, "</div>\n");
     }
     
+    void example(const std::string &name, const std::string &url)
+    {
+        fprintf(m_output, "<li><a href=\"%s\">%s</a></li>\n", url.c_str(), name.c_str());
+    }
     
     void static_member_var(Chuck_Value * var)
     {

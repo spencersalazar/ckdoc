@@ -86,6 +86,7 @@ int main(int argc, const char ** argv)
 {
     list<string> type_args;
     string title;
+    string examples_path = "http://chuck.stanford.edu/doc/examples/";
     
     const char *param;    
     for(int i = 1; i < argc; i++)
@@ -170,7 +171,40 @@ int main(int argc, const char ** argv)
         // class name
         // fprintf(stderr, "## %s\n", type->name.c_str());
         output->begin_class(type);
+        
+        if(type->examples.size())
+        {
+            output->begin_examples();
+        
+            for(vector<string>::iterator _ex = type->examples.begin(); _ex != type->examples.end(); _ex++)
+            {
+                string ex = *_ex;
+                string name;
+                string url;
                 
+                if(ex.find("http://") == 0 || ex.find("https://") == 0)
+                {
+                    // absolute URL
+                    url = ex;
+                    int pos = ex.rfind('/');
+                    if(pos != string::npos)
+                        name = string(ex, pos+1);
+                    else
+                        name = ex;
+                }
+                else
+                {
+                    // relative URL
+                    url = examples_path + ex;
+                    name = ex;
+                }
+                        
+                output->example(name, url);
+            }
+        
+            output->end_examples();
+        }
+        
         if(type->info)
         {
             map<string, int> func_names;
