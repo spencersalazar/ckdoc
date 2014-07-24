@@ -41,12 +41,17 @@ public:
         fprintf(m_output, "<title>%s</title>\n", m_title.c_str());
         fprintf(m_output, "<body>\n");
         
+        fprintf(m_output, "<a name=\"top\"/>\n");
+        fprintf(m_output, "<div id=\"title\">\n");
         fprintf(m_output, "<div class=\"titleL\"><h1><a href=\"index.html\">ChucK Class Library Reference</a></h1></div>\n");
         fprintf(m_output, "<div class=\"titleR\"><h1>%s</h1></div>\n", m_title.c_str());
+        fprintf(m_output, "</div>\n"); // #title
+        fprintf(m_output, "<div id=\"body\">\n");
     }
     
     void end()
     {
+        fprintf(m_output, "</div>\n"); // #body
         fprintf(m_output, "</body>\n</html>\n");
     }
     
@@ -106,7 +111,7 @@ public:
     
     void end_class()
     {
-        fprintf(m_output, "<p class=\"top_link\">[ <a href=\"#toc\">top</a> ]</p>\n");
+        fprintf(m_output, "<p class=\"top_link\">[ <a href=\"#top\">top</a> ]</p>\n");
         fprintf(m_output, "</div>\n<hr />\n");
     }
     
