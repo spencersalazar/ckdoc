@@ -25,23 +25,23 @@ else
 CFLAGS+= -O3
 endif
 
-ifneq (,$(strip $(filter osx bin-dist-osx,$(MAKECMDGOALS))))
+ifneq (,$(strip $(filter osx bin-dist-osx,$(MAKECMDGOALS) $(CK_TARGET))))
 include $(CHUCK_SRC_DIR)/makefile.osx
 endif
 
-ifneq (,$(strip $(filter linux-oss,$(MAKECMDGOALS))))
+ifneq (,$(strip $(filter linux-oss,$(MAKECMDGOALS) $(CK_TARGET))))
 include $(CHUCK_SRC_DIR)/makefile.oss
 endif
 
-ifneq (,$(strip $(filter linux-jack,$(MAKECMDGOALS))))
+ifneq (,$(strip $(filter linux-jack,$(MAKECMDGOALS) $(CK_TARGET))))
 include $(CHUCK_SRC_DIR)/makefile.jack
 endif
 
-ifneq (,$(strip $(filter linux-alsa,$(MAKECMDGOALS))))
+ifneq (,$(strip $(filter linux-alsa,$(MAKECMDGOALS) $(CK_TARGET))))
 include $(CHUCK_SRC_DIR)/makefile.alsa
 endif
 
-ifneq (,$(strip $(filter win32,$(MAKECMDGOALS))))
+ifneq (,$(strip $(filter win32,$(MAKECMDGOALS) $(CK_TARGET))))
 include $(CHUCK_SRC_DIR)/makefile.win32
 endif
 
@@ -131,7 +131,7 @@ STDLIB_FILE=stdlib.html
 
 UGEN_TITLE=Basic Unit Generators
 UGEN_CLASSES=UGen Gain Step Osc Phasor SinOsc TriOsc SawOsc PulseOsc SqrOsc \
-    SndBuf SndBuf2 Noise Impulse HalfRect FullRect ZeroX \
+    SndBuf SndBuf2 Noise Impulse HalfRect FullRect \
     UGen_Multi UGen_Stereo Mix2 Pan2 Chubgraph Chugen
 UGEN_FILE=ugen.html
 
@@ -154,7 +154,7 @@ STK_CLASSES=Envelope ADSR Delay DelayA DelayL Echo JCRev NRev PRCRev Chorus \
 STK_FILE=stk.html
 
 UANA_TITLE=Unit Analyzers
-UANA_CLASSES=UAna UAnaBlob Windowing FFT IFFT DCT IDCT Centroid Flux RMS RollOff
+UANA_CLASSES=UAna UAnaBlob Windowing FFT IFFT DCT IDCT Centroid Flux RMS RollOff ZeroX
 UANA_FILE=uana.html
 
 IO_TITLE=Input / Output
