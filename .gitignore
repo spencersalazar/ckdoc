@@ -3,10 +3,10 @@
 .DS_Store
 
 /ckdoc
-*.html
+/doc
 /list_objects
 /list_ugens
 /list_classes
-/class.css
 /gen_class_css
+/class.index
 

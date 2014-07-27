@@ -123,27 +123,31 @@ $(CXXOBJS): %.o: %.cpp
 	$(CXX) $(CFLAGS) -c $< -o $@
 	@$(CXX) -MM -MT "$@" $(CFLAGSDEPEND) $< > $*.d
 
-
+DOC_ROOT=doc
 
 STDLIB_TITLE=Standard Classes and Libraries
 STDLIB_CLASSES=Object @array string Event Std Machine Math Shred RegEx
 STDLIB_FILE=stdlib.html
+STDLIB_INDEX=$(foreach CLASS,$(STDLIB_CLASSES),$(CLASS) $(STDLIB_FILE)\n)
 
 UGEN_TITLE=Basic Unit Generators
 UGEN_CLASSES=UGen Gain Step Osc Phasor SinOsc TriOsc SawOsc PulseOsc SqrOsc \
     SndBuf SndBuf2 Noise Impulse HalfRect FullRect \
     UGen_Multi UGen_Stereo Mix2 Pan2 Chubgraph Chugen
 UGEN_FILE=ugen.html
+UGEN_INDEX=$(foreach CLASS,$(UGEN_CLASSES),$(CLASS) $(UGEN_FILE)\n)
 
 FILTERS_TITLE=Filters
 FILTERS_CLASSES=FilterBasic BPF BRF LPF HPF ResonZ BiQuad \
     OnePole TwoPole OneZero TwoZero PoleZero FilterStk
 FILTERS_FILE=filter.html
+FILTERS_INDEX=$(foreach CLASS,$(FILTERS_CLASSES),$(CLASS) $(FILTERS_FILE)\n)
 
 ADVUGEN_TITLE=Advanced Unit Generators
-ADVUGEN_CLASSES=LiSa LiSa10 GenX Gen5 Gen7 Gen9 Gen10 Gen17 CurveTable WarpTable \
-    CNoise Dyno 
+ADVUGEN_CLASSES=LiSa LiSa10 GenX Gen5 Gen7 Gen9 Gen10 Gen17 CurveTable \
+    WarpTable CNoise Dyno 
 ADVUGEN_FILE=advugen.html
+ADVUGEN_INDEX=$(foreach CLASS,$(ADVUGEN_CLASSES),$(CLASS) $(ADVUGEN_FILE)\n)
 
 STK_TITLE=Synthesis Toolkit (STK)
 STK_CLASSES=Envelope ADSR Delay DelayA DelayL Echo JCRev NRev PRCRev Chorus \
@@ -152,35 +156,49 @@ STK_CLASSES=Envelope ADSR Delay DelayA DelayL Echo JCRev NRev PRCRev Chorus \
     Mandolin ModalBar Moog Saxofony Shakers Sitar StifKarp VoicForm \
     FM BeeThree FMVoices HevyMetl PercFlut Rhodey TubeBell Wurley
 STK_FILE=stk.html
+STK_INDEX=$(foreach CLASS,$(STK_CLASSES),$(CLASS) $(STK_FILE)\n)
 
 UANA_TITLE=Unit Analyzers
 UANA_CLASSES=UAna UAnaBlob Windowing FFT IFFT DCT IDCT Centroid Flux RMS RollOff ZeroX
 UANA_FILE=uana.html
+UANA_INDEX=$(foreach CLASS,$(UANA_CLASSES),$(CLASS) $(UANA_FILE)\n)
 
 IO_TITLE=Input / Output
 IO_CLASSES=IO FileIO StdOut StdErr OscIn OscOut OscMsg Hid HidMsg SerialIO \
     MidiIn MidiOut MidiMsg MidiFileIn
 IO_FILE=io.html
+IO_INDEX=$(foreach CLASS,$(IO_CLASSES),$(CLASS) $(IO_FILE)\n)
 
 CHUGINS_TITLE=ChuGins
 CHUGINS_CLASSES=ABSaturator AmbPan3 Bitcrusher MagicSine KasFilter FIR \
     Pan4 Pan8 Pan16 PitchTrack GVerb Mesh2D Spectacle Elliptic
 CHUGINS_FILE=chugins.html
+CHUGINS_INDEX=$(foreach CLASS,$(CHUGINS_CLASSES),$(CLASS) $(CHUGINS_FILE)\n)
 
 GROUPS=STDLIB UGEN FILTERS ADVUGEN STK UANA IO CHUGINS
 GROUPS_INDEX=$(foreach GROUP,$(GROUPS),--group:"$($(GROUP)_TITLE)" --url:$($(GROUP)_FILE) $($(GROUP)_CLASSES))
+GROUPS_CLASSINDEX=$(foreach GROUP,$(GROUPS),$($(GROUP)_INDEX))
 
-docs: ckdoc index $(GROUPS)
-	./gen_class_css > class.css
-	./ckdoc --title:All > all.html
+docs: ckdoc index class.index $(DOC_ROOT)/ckdoc.css $(GROUPS) 
+	./gen_class_css > $(DOC_ROOT)/class.css
+	./ckdoc --title:All > $(DOC_ROOT)/all.html
 
-$(GROUPS): 
-	./ckdoc --title:"$($@_TITLE)" $($@_CLASSES) > $($@_FILE)
+$(DOC_ROOT): 
+	mkdir -p $(DOC_ROOT)
+
+$(DOC_ROOT)/ckdoc.css: ckdoc.css
+	cp $< $@
+
+$(GROUPS): $(DOC_ROOT)
+	./ckdoc --title:"$($@_TITLE)" $($@_CLASSES) > $(DOC_ROOT)/$($@_FILE)
 
 index:
 	./gen_index --title:"ChucK Class Library Reference" $(GROUPS_INDEX) \
-        > index.html
+        > $(DOC_ROOT)/index.html
+
+class.index: makefile
+	echo '$(GROUPS_CLASSINDEX)' > class.index
 
 clean: 
-	@rm -f ckdoc *.o *.d $(OBJS) $(patsubst %.o,%.d,$(OBJS)) *~
+	@rm -f ckdoc *.o *.d $(OBJS) $(patsubst %.o,%.d,$(OBJS)) *~ *.html class.index class.css
 

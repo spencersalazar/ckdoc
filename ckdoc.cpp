@@ -33,6 +33,11 @@
 
 #include "HTMLOutput.h"
 
+#include <map>
+
+
+std::string g_indexFilepath = "class.index";
+
 
 using namespace std;
 
@@ -81,6 +86,8 @@ bool isopt(const char *arg, const char *opt, const char **param = NULL)
     
     return false;
 }
+
+std::string urlforclass(const std::string &cls);
 
 int main(int argc, const char ** argv)
 {
@@ -552,5 +559,37 @@ t_CKBOOL stop_vm()
     }
     
     return TRUE;
+}
+
+
+std::string urlforclass(const std::string &cls)
+{
+    static std::map<std::string, std::string> index;
+    static bool loadedIndex = false;
+    
+    if(!loadedIndex)
+    {
+        loadedIndex = true;
+        
+        char classname[1024];
+        char url[1024];
+        
+        FILE *file = fopen(g_indexFilepath.c_str(), "r");
+        
+        if(file)
+        {
+            while(fscanf(file, "%1024s %1024s\n", classname, url) == 2 && !feof(file))
+                index[std::string(classname)] = std::string(url) + "#" + std::string(classname);
+            
+            fclose(file);
+        }
+        else
+            fprintf(stderr, "error: unable to open index file\n");
+    }
+    
+    if(index.count(cls))
+        return index[cls];
+    else
+        return "";
 }
 

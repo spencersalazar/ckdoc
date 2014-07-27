@@ -32,8 +32,12 @@ print "<link rel=\"stylesheet\" type=\"text/css\" href=\"ckdoc.css\" />\n"
 print "<link rel=\"stylesheet\" type=\"text/css\" href=\"class.css\" />\n"
 print "</head>\n"
 print "<body>\n"
+print "<div id=\"title\">\n"
 print "<div class=\"titleL\"><h1>%s</h1></div>\n" % title
 print "<div class=\"titleR\"><h1>&nbsp;</h1></div>\n"
+print "</div>\n"
+
+print "<div id=\"body\">\n"
 
 for group in groups:
     print "<div class=\"index_group\">\n"
@@ -48,6 +52,8 @@ for group in groups:
     print "</div>\n"
     print "<div class=\"clear\"></div>\n"
     print "</div>\n"
+
+print "</div>\n"
 
 print "</body>\n</html>\n"
 

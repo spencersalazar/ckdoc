@@ -65,3 +65,6 @@ public:
     virtual void end_class() = 0;
 };
 
+std::string urlforclass(const std::string &cls);
+
+

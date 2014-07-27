@@ -96,8 +96,8 @@ public:
         if(parent != NULL) fprintf(m_output, "<h4 class=\"class_hierarchy\">");
         while(parent != NULL)
         {
-            fprintf(m_output, ": <a href=\"#%s\" class=\"%s\">%s</a> ", 
-                    parent->name.c_str(), class_for_type(parent), parent->name.c_str());
+            fprintf(m_output, ": <a href=\"%s\" class=\"%s\">%s</a> ", 
+                    urlforclass(parent->name).c_str(), class_for_type(parent), parent->name.c_str());
             parent = parent->parent;
         }
         if(type->parent != NULL) fprintf(m_output, "</h4>\n");
