@@ -298,10 +298,18 @@ public:
         // argument type
         fprintf(m_output, "<span class=\"%s\">%s", 
                 class_for_type(arg->type), arg->type->name.c_str());            
+        if(arg->type->array_depth)
+        {
+            fprintf(m_output, "</span>");
+            fprintf(m_output, "<span class=\"typename\">");
+            for(int i = 0; i < arg->type->array_depth; i++)
+                fprintf(m_output, "[]");
+        }
         fprintf(m_output, "</span> ");
         
         // argument name
-        fprintf(m_output, "%s", S_name(arg->var_decl->xid));
+        std::string varname = varnameclean(S_name(arg->var_decl->xid));
+        fprintf(m_output, "%s", varname.c_str());
         
         if(arg->next != NULL)
             fprintf(m_output, ", ");
@@ -313,6 +321,15 @@ private:
     std::string m_title;
     
     bool isugen(Chuck_Type *type) { return type->ugen_info != NULL; }
+    
+    std::string varnameclean(std::string vn)
+    {
+        // strip []
+        vn.erase(std::remove(vn.begin(), vn.end(), '['), vn.end());
+        vn.erase(std::remove(vn.begin(), vn.end(), ']'), vn.end());
+        
+        return vn;
+    }
     
     std::string cssclean(std::string s)
     {
