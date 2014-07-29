@@ -179,7 +179,7 @@ GROUPS=STDLIB UGEN FILTERS ADVUGEN STK UANA IO CHUGINS
 GROUPS_INDEX=$(foreach GROUP,$(GROUPS),--group:"$($(GROUP)_TITLE)" --url:$($(GROUP)_FILE) $($(GROUP)_CLASSES))
 GROUPS_CLASSINDEX=$(foreach GROUP,$(GROUPS),$($(GROUP)_INDEX))
 
-docs: ckdoc index class.index $(DOC_ROOT)/ckdoc.css $(GROUPS) 
+docs: ckdoc gen_class_css index class.index $(DOC_ROOT)/ckdoc.css $(GROUPS) 
 	./gen_class_css > $(DOC_ROOT)/class.css
 	./ckdoc --title:All > $(DOC_ROOT)/all.html
 
@@ -189,10 +189,10 @@ $(DOC_ROOT):
 $(DOC_ROOT)/ckdoc.css: ckdoc.css
 	cp $< $@
 
-$(GROUPS): $(DOC_ROOT)
+$(GROUPS): $(DOC_ROOT) ckdoc
 	./ckdoc --title:"$($@_TITLE)" $($@_CLASSES) > $(DOC_ROOT)/$($@_FILE)
 
-index:
+index: gen_index
 	./gen_index --title:"ChucK Class Library Reference" $(GROUPS_INDEX) \
         > $(DOC_ROOT)/index.html
 
