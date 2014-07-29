@@ -200,5 +200,5 @@ class.index: makefile
 	echo '$(GROUPS_CLASSINDEX)' > class.index
 
 clean: 
-	@rm -f ckdoc *.o *.d $(OBJS) $(patsubst %.o,%.d,$(OBJS)) *~ *.html class.index class.css
+	@rm -f ckdoc *.o *.d $(OBJS) $(patsubst %.o,%.d,$(OBJS)) *~ class.index $(DOC_ROOT)
 
