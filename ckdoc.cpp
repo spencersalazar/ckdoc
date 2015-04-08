@@ -36,7 +36,7 @@
 #include <map>
 
 
-std::string g_indexFilepath = "class.index";
+const std::string g_indexFilepath = "class.index";
 
 
 using namespace std;
@@ -87,32 +87,50 @@ bool isopt(const char *arg, const char *opt, const char **param = NULL)
     return false;
 }
 
+void makeindex(const std::string &filepath);
 std::string urlforclass(const std::string &cls);
 
 int main(int argc, const char ** argv)
 {
     list<string> type_args;
     string title;
+    string index_path = g_indexFilepath;
     string examples_path = "http://chuck.stanford.edu/doc/examples/";
+    bool do_toc = true;
+    bool do_heading = true;
     
     const char *param;    
     for(int i = 1; i < argc; i++)
     {
-        if( isopt(argv[i], "--title:", &param) )
+        if(isopt(argv[i], "--title:", &param))
         {
             title = param;
         }
-        else if( isopt(argv[i], "-v", &param) )
+        else if(isopt(argv[i], "--index:", &param))
+        {
+            index_path = param;
+        }
+        else if(isopt(argv[i], "-v", &param))
         {
             t_CKINT log_level = atoi(param);
             if(log_level == 0) log_level = CK_LOG_INFO;
             EM_setlog(log_level);
+        }
+        else if(isopt(argv[i], "--no-toc"))
+        {
+            do_toc = false;
+        }
+        else if(isopt(argv[i], "--no-heading"))
+        {
+            do_heading = false;
         }
         else if(strncmp(argv[i], "-", 1) != 0 && strncmp(argv[i], "--", 2) != 0)
         {
             type_args.push_back(argv[i]);
         }
     }
+    
+    makeindex(index_path);
     
     start_vm(argc, argv);
     
@@ -121,6 +139,11 @@ int main(int argc, const char ** argv)
     // iterate through types
     
     output->begin(title);
+    
+    if(do_heading)
+        output->heading();
+    
+    output->begin_body();
     
     Chuck_Env * env = Chuck_Env::instance();
     vector<Chuck_Type *> types;
@@ -154,18 +177,21 @@ int main(int argc, const char ** argv)
         types = newTypes;
     }
     
-    output->begin_toc();
-    
-    for(vector<Chuck_Type *>::iterator t = types.begin(); t != types.end(); t++)
+    if(do_toc)
     {
-        Chuck_Type * type = *t;
-        
-        if(skip(type->name)) continue;
-        
-        output->toc_class(type);
-    }
+        output->begin_toc();
     
-    output->end_toc();
+        for(vector<Chuck_Type *>::iterator t = types.begin(); t != types.end(); t++)
+        {
+            Chuck_Type * type = *t;
+        
+            if(skip(type->name)) continue;
+        
+            output->toc_class(type);
+        }
+    
+        output->end_toc();
+    }
     
     output->begin_classes();
     
@@ -336,6 +362,8 @@ int main(int argc, const char ** argv)
     }
     
     output->end_classes();
+    
+    output->end_body();
     
     output->end();
 
@@ -562,33 +590,30 @@ t_CKBOOL stop_vm()
 }
 
 
-std::string urlforclass(const std::string &cls)
+static std::map<std::string, std::string> g_index;
+
+void makeindex(const std::string &filepath)
 {
-    static std::map<std::string, std::string> index;
-    static bool loadedIndex = false;
+    char classname[1024];
+    char url[1024];
     
-    if(!loadedIndex)
+    FILE *file = fopen(filepath.c_str(), "r");
+    
+    if(file)
     {
-        loadedIndex = true;
+        while(fscanf(file, "%1024s %1024s\n", classname, url) == 2 && !feof(file))
+            g_index[std::string(classname)] = std::string(url) + "#" + std::string(classname);
         
-        char classname[1024];
-        char url[1024];
-        
-        FILE *file = fopen(g_indexFilepath.c_str(), "r");
-        
-        if(file)
-        {
-            while(fscanf(file, "%1024s %1024s\n", classname, url) == 2 && !feof(file))
-                index[std::string(classname)] = std::string(url) + "#" + std::string(classname);
-            
-            fclose(file);
-        }
-        else
-            fprintf(stderr, "error: unable to open index file\n");
+        fclose(file);
     }
-    
-    if(index.count(cls))
-        return index[cls];
+    else
+        fprintf(stderr, "error: unable to open index file '%s'\n", filepath.c_str());
+}
+
+std::string urlforclass(const std::string &cls)
+{    
+    if(g_index.count(cls))
+        return g_index[cls];
     else
         return "";
 }

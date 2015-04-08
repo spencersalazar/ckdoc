@@ -175,16 +175,31 @@ CHUGINS_CLASSES=ABSaturator AmbPan3 Bitcrusher MagicSine KasFilter FIR \
 CHUGINS_FILE=chugins.html
 CHUGINS_INDEX=$(foreach CLASS,$(CHUGINS_CLASSES),$(CLASS) $(CHUGINS_FILE)\n)
 
+CHUGL_TITLE=Chugl
+CHUGL_CLASSES=chugl OpenGL
+CHUGL_FILE=chugl.html
+CHUGL_INDEX=$(foreach CLASS,$(CHUGINS_CLASSES),$(CLASS) $(CHUGINS_FILE)\n)
+
 GROUPS=STDLIB UGEN FILTERS ADVUGEN STK UANA IO CHUGINS
 GROUPS_INDEX=$(foreach GROUP,$(GROUPS),--group:"$($(GROUP)_TITLE)" --url:$($(GROUP)_FILE) $($(GROUP)_CLASSES))
 GROUPS_CLASSINDEX=$(foreach GROUP,$(GROUPS),$($(GROUP)_INDEX))
 
-docs: ckdoc gen_class_css index class.index $(DOC_ROOT)/ckdoc.css $(GROUPS) 
+SINGLE_CLASSES=$(foreach GROUP,$(GROUPS),$($(GROUP)_CLASSES))
+SINGLE_CLASSINDEX=$(foreach CLASS,$(SINGLE_CLASSES),$(CLASS) $(CLASS).html\n)
+SINGLE_ROOT=$(DOC_ROOT)/single
+
+docs: ckdoc gen_class_css index class.index $(DOC_ROOT)/ckdoc.css $(GROUPS) single
 	./gen_class_css > $(DOC_ROOT)/class.css
 	./ckdoc --title:All > $(DOC_ROOT)/all.html
 
+# test:
+# 	@echo $(SINGLE_CLASSES)
+
 $(DOC_ROOT): 
 	mkdir -p $(DOC_ROOT)
+
+$(SINGLE_ROOT): $(DOC_ROOT)
+	mkdir -p $(SINGLE_ROOT)
 
 $(DOC_ROOT)/ckdoc.css: ckdoc.css
 	cp $< $@
@@ -197,7 +212,21 @@ index: gen_index
         > $(DOC_ROOT)/index.html
 
 class.index: makefile
-	echo '$(GROUPS_CLASSINDEX)' > class.index
+	@echo '$(GROUPS_CLASSINDEX)' > class.index
+
+
+
+single: $(SINGLE_CLASSES) $(SINGLE_ROOT)
+	./gen_class_css > $(SINGLE_ROOT)/class.css
+	cp ckdoc.css $(SINGLE_ROOT)/ckdoc.css
+
+$(SINGLE_CLASSES): $(SINGLE_ROOT) ckdoc $(SINGLE_ROOT)/class.index
+	./ckdoc --title:"$@" --no-toc --no-heading --index:$(SINGLE_ROOT)/class.index $@ > $(SINGLE_ROOT)/$@.html
+
+$(SINGLE_ROOT)/class.index: makefile
+	@echo '$(SINGLE_CLASSINDEX)' > $(SINGLE_ROOT)/class.index
+
+
 
 clean: 
 	@rm -f ckdoc *.o *.d $(OBJS) $(patsubst %.o,%.d,$(OBJS)) *~ class.index $(DOC_ROOT)

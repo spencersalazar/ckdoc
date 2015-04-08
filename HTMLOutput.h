@@ -40,23 +40,35 @@ public:
         fprintf(m_output, "<link rel=\"stylesheet\" type=\"text/css\" href=\"class.css\" />\n");
         fprintf(m_output, "<title>%s</title>\n", m_title.c_str());
         fprintf(m_output, "<body>\n");
-        
+    }
+    
+    void heading()
+    {
         fprintf(m_output, "<a name=\"top\"/>\n");
         fprintf(m_output, "<div id=\"title\">\n");
         fprintf(m_output, "<div class=\"titleL\"><h1><a href=\"index.html\">ChucK Class Library Reference</a></h1></div>\n");
         fprintf(m_output, "<div class=\"titleR\"><h1>%s</h1></div>\n", m_title.c_str());
         fprintf(m_output, "</div>\n"); // #title
-        fprintf(m_output, "<div id=\"body\">\n");
     }
     
     void end()
     {
-        fprintf(m_output, "</div>\n"); // #body
-        fprintf(m_output, "</body>\n</html>\n");
+        fprintf(m_output, "</html>\n");
     }
     
     void title(const std::string &_title)
     {
+    }
+    
+    void begin_body()
+    {
+        fprintf(m_output, "<div id=\"body\">\n");
+    }
+    
+    void end_body()
+    {
+        fprintf(m_output, "</div>\n"); // #body
+        fprintf(m_output, "</body>\n");
     }
     
     void begin_toc()
