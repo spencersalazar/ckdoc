@@ -188,7 +188,7 @@ SINGLE_CLASSES=$(foreach GROUP,$(GROUPS),$($(GROUP)_CLASSES))
 SINGLE_CLASSINDEX=$(foreach CLASS,$(SINGLE_CLASSES),$(CLASS) $(CLASS).html\n)
 SINGLE_ROOT=$(DOC_ROOT)/single
 
-docs: ckdoc gen_class_css index class.index $(DOC_ROOT)/ckdoc.css $(GROUPS) single
+docs: ckdoc gen_class_css index class.index $(DOC_ROOT) $(DOC_ROOT)/ckdoc.css $(GROUPS) single
 	./gen_class_css > $(DOC_ROOT)/class.css
 	./ckdoc --title:All > $(DOC_ROOT)/all.html
 
@@ -201,7 +201,7 @@ $(DOC_ROOT):
 $(SINGLE_ROOT): $(DOC_ROOT)
 	mkdir -p $(SINGLE_ROOT)
 
-$(DOC_ROOT)/ckdoc.css: ckdoc.css
+$(DOC_ROOT)/ckdoc.css: ckdoc.css $(DOC_ROOT)
 	cp $< $@
 
 $(GROUPS): $(DOC_ROOT) ckdoc
