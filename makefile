@@ -207,7 +207,7 @@ $(DOC_ROOT)/ckdoc.css: ckdoc.css $(DOC_ROOT)
 $(GROUPS): $(DOC_ROOT) ckdoc
 	./ckdoc --title:"$($@_TITLE)" $($@_CLASSES) > $(DOC_ROOT)/$($@_FILE)
 
-index: gen_index
+index: gen_index $(DOC_ROOT)
 	./gen_index --title:"ChucK Class Library Reference" $(GROUPS_INDEX) \
         > $(DOC_ROOT)/index.html
 
@@ -223,11 +223,11 @@ single: $(SINGLE_CLASSES) $(SINGLE_ROOT)
 $(SINGLE_CLASSES): $(SINGLE_ROOT) ckdoc $(SINGLE_ROOT)/class.index
 	./ckdoc --title:"$@" --no-toc --no-heading --index:$(SINGLE_ROOT)/class.index $@ > $(SINGLE_ROOT)/$@.html
 
-$(SINGLE_ROOT)/class.index: makefile
+$(SINGLE_ROOT)/class.index: makefile $(SINGLE_ROOT)
 	@echo '$(SINGLE_CLASSINDEX)' > $(SINGLE_ROOT)/class.index
 
 
 
 clean: 
-	@rm -f ckdoc *.o *.d $(OBJS) $(patsubst %.o,%.d,$(OBJS)) *~ class.index $(DOC_ROOT)
+	@rm -rf ckdoc *.o *.d $(OBJS) $(patsubst %.o,%.d,$(OBJS)) *~ class.index $(DOC_ROOT)
 
