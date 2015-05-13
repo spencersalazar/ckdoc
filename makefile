@@ -175,8 +175,8 @@ CHUGINS_CLASSES=ABSaturator AmbPan3 Bitcrusher MagicSine KasFilter FIR \
 CHUGINS_FILE=chugins.html
 CHUGINS_INDEX=$(foreach CLASS,$(CHUGINS_CLASSES),$(CLASS) $(CHUGINS_FILE)\n)
 
-CHUGL_TITLE=Chugl
-CHUGL_CLASSES=chugl OpenGL
+CHUGL_TITLE=ChuGL
+CHUGL_CLASSES=chugl chuglImage OpenGL curve curveExp
 CHUGL_FILE=chugl.html
 CHUGL_INDEX=$(foreach CLASS,$(CHUGINS_CLASSES),$(CLASS) $(CHUGINS_FILE)\n)
 
@@ -188,12 +188,17 @@ SINGLE_CLASSES=$(foreach GROUP,$(GROUPS),$($(GROUP)_CLASSES))
 SINGLE_CLASSINDEX=$(foreach CLASS,$(SINGLE_CLASSES),$(CLASS) $(CLASS).html\n)
 SINGLE_ROOT=$(DOC_ROOT)/single
 
-docs: ckdoc gen_class_css index class.index $(DOC_ROOT)/ckdoc.css $(GROUPS) single
-	./gen_class_css > $(DOC_ROOT)/class.css
+docs: ckdoc index $(DOC_ROOT)/class.css class.index $(DOC_ROOT) $(DOC_ROOT)/ckdoc.css $(GROUPS) single
 	./ckdoc --title:All > $(DOC_ROOT)/all.html
+
+chugl-doc: ckdoc class.index $(DOC_ROOT) $(DOC_ROOT)/ckdoc.css $(DOC_ROOT)/class.css 
+	./ckdoc --title:"$(CHUGL_TITLE)" $(CHUGL_CLASSES) > $(DOC_ROOT)/$(CHUGL_FILE)
 
 # test:
 # 	@echo $(SINGLE_CLASSES)
+
+$(DOC_ROOT)/class.css: gen_class_css $(DOC_ROOT)
+	./gen_class_css > $(DOC_ROOT)/class.css
 
 $(DOC_ROOT): 
 	mkdir -p $(DOC_ROOT)
@@ -201,13 +206,13 @@ $(DOC_ROOT):
 $(SINGLE_ROOT): $(DOC_ROOT)
 	mkdir -p $(SINGLE_ROOT)
 
-$(DOC_ROOT)/ckdoc.css: ckdoc.css
+$(DOC_ROOT)/ckdoc.css: ckdoc.css $(DOC_ROOT)
 	cp $< $@
 
 $(GROUPS): $(DOC_ROOT) ckdoc
 	./ckdoc --title:"$($@_TITLE)" $($@_CLASSES) > $(DOC_ROOT)/$($@_FILE)
 
-index: gen_index
+index: gen_index $(DOC_ROOT)
 	./gen_index --title:"ChucK Class Library Reference" $(GROUPS_INDEX) \
         > $(DOC_ROOT)/index.html
 
@@ -223,11 +228,11 @@ single: $(SINGLE_CLASSES) $(SINGLE_ROOT)
 $(SINGLE_CLASSES): $(SINGLE_ROOT) ckdoc $(SINGLE_ROOT)/class.index
 	./ckdoc --title:"$@" --no-toc --no-heading --index:$(SINGLE_ROOT)/class.index $@ > $(SINGLE_ROOT)/$@.html
 
-$(SINGLE_ROOT)/class.index: makefile
+$(SINGLE_ROOT)/class.index: makefile $(SINGLE_ROOT)
 	@echo '$(SINGLE_CLASSINDEX)' > $(SINGLE_ROOT)/class.index
 
 
 
 clean: 
-	@rm -f ckdoc *.o *.d $(OBJS) $(patsubst %.o,%.d,$(OBJS)) *~ class.index $(DOC_ROOT)
+	@rm -rf ckdoc *.o *.d $(OBJS) $(patsubst %.o,%.d,$(OBJS)) *~ class.index $(DOC_ROOT)
 
