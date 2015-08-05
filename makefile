@@ -181,11 +181,11 @@ CHUGL_CLASSES=chugl chuglImage OpenGL curve curveExp
 CHUGL_FILE=chugl.html
 CHUGL_INDEX=$(foreach CLASS,$(CHUGINS_CLASSES),$(CLASS) $(CHUGINS_FILE)\n)
 
-GROUPS=STDLIB UGEN FILTERS ADVUGEN STK UANA IO CHUGINS
-GROUPS_INDEX=$(foreach GROUP,$(GROUPS),--group:"$($(GROUP)_TITLE)" --url:$($(GROUP)_FILE) $($(GROUP)_CLASSES))
-GROUPS_CLASSINDEX=$(foreach GROUP,$(GROUPS),$($(GROUP)_INDEX))
+GROUPS=STDLIB_ UGEN_ FILTERS_ ADVUGEN_ STK_ UANA_ IO_ CHUGINS_
+GROUPS_INDEX=$(foreach GROUP,$(GROUPS),--group:"$($(GROUP)TITLE)" --url:$($(GROUP)FILE) $($(GROUP)CLASSES))
+GROUPS_CLASSINDEX=$(foreach GROUP,$(GROUPS),$($(GROUP)INDEX))
 
-SINGLE_CLASSES=$(foreach GROUP,$(GROUPS),$($(GROUP)_CLASSES))
+SINGLE_CLASSES=$(foreach GROUP,$(GROUPS),$($(GROUP)CLASSES))
 SINGLE_CLASSINDEX=$(foreach CLASS,$(SINGLE_CLASSES),$(CLASS) $(CLASS).html\n)
 SINGLE_ROOT=$(DOC_ROOT)/single
 
@@ -211,7 +211,7 @@ $(DOC_ROOT)/ckdoc.css: ckdoc.css $(DOC_ROOT)
 	cp $< $@
 
 $(GROUPS): $(DOC_ROOT) ckdoc
-	./ckdoc --title:"$($@_TITLE)" $($@_CLASSES) > $(DOC_ROOT)/$($@_FILE)
+	./ckdoc --title:"$($@TITLE)" $($@CLASSES) > $(DOC_ROOT)/$($@FILE)
 
 index: gen_index $(DOC_ROOT)
 	./gen_index --title:"ChucK Class Library Reference" $(GROUPS_INDEX) \
