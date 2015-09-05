@@ -232,7 +232,11 @@ $(SINGLE_CLASSES): $(SINGLE_ROOT) ckdoc $(SINGLE_ROOT)/class.index
 $(SINGLE_ROOT)/class.index: makefile $(SINGLE_ROOT)
 	@echo '$(SINGLE_CLASSINDEX)' > $(SINGLE_ROOT)/class.index
 
+upload:
+	rsync -rave ssh $(DOC_ROOT)/* ccrma-gate.stanford.edu:Library/Web/ckdoc/
 
+clean-docs:
+	@rm -rf class.index $(DOC_ROOT)
 
 clean: 
 	@rm -rf ckdoc *.o *.d $(OBJS) $(patsubst %.o,%.d,$(OBJS)) *~ class.index $(DOC_ROOT)
