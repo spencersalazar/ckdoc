@@ -145,7 +145,7 @@ FILTERS_INDEX=$(foreach CLASS,$(FILTERS_CLASSES),$(CLASS) $(FILTERS_FILE)\n)
 
 ADVUGEN_TITLE=Advanced Unit Generators
 ADVUGEN_CLASSES=LiSa LiSa10 GenX Gen5 Gen7 Gen9 Gen10 Gen17 CurveTable \
-    WarpTable CNoise Dyno 
+    WarpTable CNoise Dyno
 ADVUGEN_FILE=advugen.html
 ADVUGEN_INDEX=$(foreach CLASS,$(ADVUGEN_CLASSES),$(CLASS) $(ADVUGEN_FILE)\n)
 
@@ -159,7 +159,7 @@ STK_FILE=stk.html
 STK_INDEX=$(foreach CLASS,$(STK_CLASSES),$(CLASS) $(STK_FILE)\n)
 
 UANA_TITLE=Unit Analyzers
-UANA_CLASSES=UAna UAnaBlob Windowing FFT IFFT DCT IDCT Centroid Flux RMS RollOff ZeroX Flip pilF
+UANA_CLASSES=UAna UAnaBlob Windowing FFT IFFT DCT IDCT Centroid Flux RMS RollOff ZeroX Flip pilF FeatureCollector
 UANA_FILE=uana.html
 UANA_INDEX=$(foreach CLASS,$(UANA_CLASSES),$(CLASS) $(UANA_FILE)\n)
 
@@ -192,7 +192,7 @@ SINGLE_ROOT=$(DOC_ROOT)/single
 docs: ckdoc index $(DOC_ROOT)/class.css class.index $(DOC_ROOT) $(DOC_ROOT)/ckdoc.css $(GROUPS) single
 	./ckdoc --title:All > $(DOC_ROOT)/all.html
 
-chugl-doc: ckdoc class.index $(DOC_ROOT) $(DOC_ROOT)/ckdoc.css $(DOC_ROOT)/class.css 
+chugl-doc: ckdoc class.index $(DOC_ROOT) $(DOC_ROOT)/ckdoc.css $(DOC_ROOT)/class.css
 	./ckdoc --title:"$(CHUGL_TITLE)" $(CHUGL_CLASSES) > $(DOC_ROOT)/$(CHUGL_FILE)
 
 # test:
@@ -201,7 +201,7 @@ chugl-doc: ckdoc class.index $(DOC_ROOT) $(DOC_ROOT)/ckdoc.css $(DOC_ROOT)/class
 $(DOC_ROOT)/class.css: gen_class_css $(DOC_ROOT)
 	./gen_class_css > $(DOC_ROOT)/class.css
 
-$(DOC_ROOT): 
+$(DOC_ROOT):
 	mkdir -p $(DOC_ROOT)
 
 $(SINGLE_ROOT): $(DOC_ROOT)
@@ -238,6 +238,6 @@ upload:
 clean-docs:
 	@rm -rf class.index $(DOC_ROOT)
 
-clean: 
+clean:
 	@rm -rf ckdoc *.o *.d $(OBJS) $(patsubst %.o,%.d,$(OBJS)) *~ class.index $(DOC_ROOT)
 
