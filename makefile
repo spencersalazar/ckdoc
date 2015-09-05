@@ -159,7 +159,7 @@ STK_FILE=stk.html
 STK_INDEX=$(foreach CLASS,$(STK_CLASSES),$(CLASS) $(STK_FILE)\n)
 
 UANA_TITLE=Unit Analyzers
-UANA_CLASSES=UAna UAnaBlob Windowing FFT IFFT DCT IDCT Centroid Flux RMS RollOff ZeroX
+UANA_CLASSES=UAna UAnaBlob Windowing FFT IFFT DCT IDCT Centroid Flux RMS RollOff ZeroX Flip pilF
 UANA_FILE=uana.html
 UANA_INDEX=$(foreach CLASS,$(UANA_CLASSES),$(CLASS) $(UANA_FILE)\n)
 
