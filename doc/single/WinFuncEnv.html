@@ -1,0 +1,113 @@
+<html>
+<link rel="stylesheet" type="text/css" href="ckdoc.css" />
+<link rel="stylesheet" type="text/css" href="class.css" />
+<title>WinFuncEnv</title>
+<body>
+<div id="body">
+<div class="classes">
+<a name="WinFuncEnv" /><div class="class">
+<h2 class="class_title" name="WinFuncEnv">WinFuncEnv</h2>
+<h4 class="class_hierarchy">: <a href="Envelope.html#Envelope" class="typename type_Envelope">Envelope</a> : <a href="UGen.html#UGen" class="typename type_UGen">UGen</a> : <a href="Object.html#Object" class="typename type_Object">Object</a> </h4>
+<p class="empty_class_description">No description available</p>
+<h3 class="class_section_header">member functions</h3>
+<div class="members">
+<div class="member">
+<p class="member_declaration"><span class="typename type_dur">dur</span> <span class="membername">attack</span>(<span class="typename type_dur">dur</span> attackDuration)</p>
+<p class="member_description">Set duration of the attack phase. </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_int">int</span> <span class="membername">keyOff</span>()</p>
+<p class="member_description">Start release phase. </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_int">int</span> <span class="membername">keyOff</span>(<span class="typename type_int">int</span> keyOff)</p>
+<p class="member_description">Start release phas. </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_int">int</span> <span class="membername">keyOn</span>()</p>
+<p class="member_description">Start attack phase. </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_int">int</span> <span class="membername">keyOn</span>(<span class="typename type_int">int</span> keyOn)</p>
+<p class="member_description">Start attack phase. </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_dur">dur</span> <span class="membername">release</span>(<span class="typename type_dur">dur</span> releaseDuration)</p>
+<p class="member_description">Set duration of the release phase. </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_void">void</span> <span class="membername">setBlackman</span>()</p>
+<p class="member_description">Set Blackman Window Envelope with default value (0.16). </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_void">void</span> <span class="membername">setBlackman</span>(<span class="typename type_float">float</span> a)</p>
+<p class="member_description">Set Blackman Window Envelope with a custom value. </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_void">void</span> <span class="membername">setBlackmanDerivative</span>(<span class="typename type_float">float</span> a0, <span class="typename type_float">float</span> a1, <span class="typename type_float">float</span> a2, <span class="typename type_float">float</span> a3)</p>
+<p class="member_description">Set a custom Blackman Derivative Envelope with custom values. </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_void">void</span> <span class="membername">setBlackmanHarris</span>()</p>
+<p class="member_description">Set BlackmanHarris Window Envelope. </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_void">void</span> <span class="membername">setBlackmanNutall</span>()</p>
+<p class="member_description">Set BlackmanNutall Window Envelope. </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_void">void</span> <span class="membername">setExponential</span>()</p>
+<p class="member_description">Set Exponential Function Envelope with default value (8.69/60.0). </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_void">void</span> <span class="membername">setExponential</span>(<span class="typename type_float">float</span> a)</p>
+<p class="member_description">Set Exponential Function Envleope with a custom value. </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_void">void</span> <span class="membername">setHann</span>()</p>
+<p class="member_description">Set Hann (Hanning) Window Envelope. </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_void">void</span> <span class="membername">setHannPoisson</span>()</p>
+<p class="member_description">Set Hann-Poisson Window Envelope with default value (0.5). </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_void">void</span> <span class="membername">setHannPoisson</span>(<span class="typename type_float">float</span> a)</p>
+<p class="member_description">Set Hann-Poisson Window Envelope with a custom value. </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_void">void</span> <span class="membername">setNutall</span>()</p>
+<p class="member_description">Set Nutall Window Envelope. </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_void">void</span> <span class="membername">setParzen</span>()</p>
+<p class="member_description">Set Parzen Window Envelope. </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_void">void</span> <span class="membername">setPoisson</span>()</p>
+<p class="member_description">Set Poisson Window Envelope with default value (6.0). </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_void">void</span> <span class="membername">setPoisson</span>(<span class="typename type_float">float</span> a)</p>
+<p class="member_description">Set Poisson Window Envelope with a custom value. </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_void">void</span> <span class="membername">setTukey</span>()</p>
+<p class="member_description">Set Tukey Window Envelope with default value (0.5). </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_void">void</span> <span class="membername">setTukey</span>(<span class="typename type_float">float</span> a)</p>
+<p class="member_description">Set Tukey Window Envelope with a custom value. </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_void">void</span> <span class="membername">setWelch</span>()</p>
+<p class="member_description">Set Welch Window Window. </p>
+</div>
+</div>
+<p class="top_link">[ <a href="#top">top</a> ]</p>
+</div>
+<hr />
+</div>
+</div>
+</body>
+</html>

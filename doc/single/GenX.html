@@ -1,0 +1,29 @@
+<html>
+<link rel="stylesheet" type="text/css" href="ckdoc.css" />
+<link rel="stylesheet" type="text/css" href="class.css" />
+<title>GenX</title>
+<body>
+<div id="body">
+<div class="classes">
+<a name="GenX" /><div class="class">
+<h2 class="class_title" name="GenX">GenX</h2>
+<h4 class="class_hierarchy">: <a href="UGen.html#UGen" class="typename type_UGen">UGen</a> : <a href="Object.html#Object" class="typename type_Object">Object</a> </h4>
+<p class="class_description">Ported from rtcmix. See http://www.music.columbia.edu/cmix/makegens.html">this</a>     for more information on the GenX family of UGens. Currently coefficients past     the 100th are ignored.        Lookup can either be done using the lookup() function, or by driving the     table with an input UGen, typically a Phasor. For an input signal between     [ -1, 1 ], using the absolute value for [ -1, 0 ), GenX will output the     table value indexed by the current input.</p>
+<h3 class="class_section_header">member functions</h3>
+<div class="members">
+<div class="member">
+<p class="member_declaration"><span class="typename type_float">float</span><span class="typename">[]</span> <span class="membername">coefs</span>(<span class="typename type_float">float</span><span class="typename">[]</span> v)</p>
+<p class="member_description">Set lookup table coefficients. Meaning is dependent on subclass.</p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_float">float</span> <span class="membername">lookup</span>(<span class="typename type_float">float</span> which)</p>
+<p class="member_description">Returns lookup table value at index i [ -1, 1 ]. Absolute value is used in the range [ -1, 0 ).</p>
+</div>
+</div>
+<p class="top_link">[ <a href="#top">top</a> ]</p>
+</div>
+<hr />
+</div>
+</div>
+</body>
+</html>

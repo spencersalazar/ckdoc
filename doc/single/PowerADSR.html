@@ -1,0 +1,73 @@
+<html>
+<link rel="stylesheet" type="text/css" href="ckdoc.css" />
+<link rel="stylesheet" type="text/css" href="class.css" />
+<title>PowerADSR</title>
+<body>
+<div id="body">
+<div class="classes">
+<a name="PowerADSR" /><div class="class">
+<h2 class="class_title" name="PowerADSR">PowerADSR</h2>
+<h4 class="class_hierarchy">: <a href="Envelope.html#Envelope" class="typename type_Envelope">Envelope</a> : <a href="UGen.html#UGen" class="typename type_UGen">UGen</a> : <a href="Object.html#Object" class="typename type_Object">Object</a> </h4>
+<p class="class_description">ADSR envelope that uses a power function to create curved envelope phases, extends Envelope.</p>
+<h3 class="class_section_header">member functions</h3>
+<div class="members">
+<div class="member">
+<p class="member_declaration"><span class="typename type_dur">dur</span> <span class="membername">attack</span>(<span class="typename type_dur">dur</span> attackDuration)</p>
+<p class="member_description">Sets duration of the attack phase. </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_float">float</span> <span class="membername">attackCurve</span>(<span class="typename type_float">float</span> attackCurve)</p>
+<p class="member_description">Sets envelope curve of the attack phase. </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_dur">dur</span> <span class="membername">decay</span>(<span class="typename type_dur">dur</span> decayDuration)</p>
+<p class="member_description">Sets duration of the decay phase. </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_float">float</span> <span class="membername">decayCurve</span>(<span class="typename type_float">float</span> decayCurve)</p>
+<p class="member_description">Sets envelope curve of the decay phase. </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_int">int</span> <span class="membername">keyOff</span>()</p>
+<p class="member_description">Begins the release phase of the envelope. </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_int">int</span> <span class="membername">keyOff</span>(<span class="typename type_int">int</span> keyOff)</p>
+<p class="member_description">Begins the release phase of the envelope. </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_int">int</span> <span class="membername">keyOn</span>()</p>
+<p class="member_description">Begins the attack phase of the envelope. </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_int">int</span> <span class="membername">keyOn</span>(<span class="typename type_int">int</span> keyOn)</p>
+<p class="member_description">Begins the attack phase of the envelope. </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_dur">dur</span> <span class="membername">release</span>(<span class="typename type_dur">dur</span> releaseDuration)</p>
+<p class="member_description">Sets duration of the release phase. </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_float">float</span> <span class="membername">releaseCurve</span>(<span class="typename type_float">float</span> releaseCurve)</p>
+<p class="member_description">Sets envelope curve of the release phase. </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_void">void</span> <span class="membername">set</span>(<span class="typename type_dur">dur</span> attackDuration, <span class="typename type_dur">dur</span> decayDuration, <span class="typename type_float">float</span> sustainLevel, <span class="typename type_dur">dur</span> releaseDuration)</p>
+<p class="member_description">Sets duration of the attack, decay, and release phases; as well as the sustain level (ADSR order). </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_void">void</span> <span class="membername">setCurves</span>(<span class="typename type_float">float</span> attackCurve, <span class="typename type_float">float</span> decayCurve, <span class="typename type_float">float</span> releaseCurve)</p>
+<p class="member_description">Sets envelope curves of the attack, decay, and release phases. </p>
+</div>
+<div class="member">
+<p class="member_declaration"><span class="typename type_float">float</span> <span class="membername">sustain</span>(<span class="typename type_float">float</span> sustainLevel)</p>
+<p class="member_description">Sets sustain level. </p>
+</div>
+</div>
+<p class="top_link">[ <a href="#top">top</a> ]</p>
+</div>
+<hr />
+</div>
+</div>
+</body>
+</html>
