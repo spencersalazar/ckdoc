@@ -115,8 +115,15 @@ public:
         if(type->parent != NULL) fprintf(m_output, "</h4>\n");
         
         if(type->doc.size() > 0)
+        {
+            std::string doc;
+            if(m_doc_text_filter)
+                doc = m_doc_text_filter->filter(type->doc);
+            else
+                doc = type->doc;
             fprintf(m_output, "<p class=\"class_description\">%s</p>\n", 
-                    type->doc.c_str());
+                    doc.c_str());
+        }
         else
             fprintf(m_output, "<p class=\"empty_class_description\">No description available</p>\n");
     }

@@ -34,6 +34,12 @@
 #include "HTMLOutput.h"
 
 #include <map>
+#include <vector>
+#include <string>
+#include <sstream>
+
+#include <sys/stat.h> 
+#include <fcntl.h>
 
 
 const std::string g_indexFilepath = "class.index";
@@ -89,6 +95,25 @@ bool isopt(const char *arg, const char *opt, const char **param = NULL)
 
 void makeindex(const std::string &filepath);
 std::string urlforclass(const std::string &cls);
+std::string find_exe(const std::string &exe);
+std::string filter_markdown(const std::string &md_exe, const std::string &text);
+
+
+class MarkdownTextFilter : public TextFilter
+{
+public:
+    MarkdownTextFilter(const string &markdown_exe) : m_markdown_exe(markdown_exe)
+    { }
+    
+    virtual std::string filter(const std::string &md_text)
+    {
+        return filter_markdown(m_markdown_exe, md_text);
+    }
+    
+private:
+    std::string m_markdown_exe;
+};
+
 
 int main(int argc, const char ** argv)
 {
@@ -96,6 +121,8 @@ int main(int argc, const char ** argv)
     string title;
     string index_path = g_indexFilepath;
     string examples_path = "http://chuck.stanford.edu/doc/examples/";
+    string markdown_exe = "markdown";
+    bool do_markdown = true;
     bool do_toc = true;
     bool do_heading = true;
     
@@ -124,17 +151,27 @@ int main(int argc, const char ** argv)
         {
             do_heading = false;
         }
+        else if(isopt(argv[i], "--markdown:", &param))
+        {
+            markdown_exe = param;
+        }
         else if(strncmp(argv[i], "-", 1) != 0 && strncmp(argv[i], "--", 2) != 0)
         {
             type_args.push_back(argv[i]);
         }
     }
     
+    markdown_exe = find_exe(markdown_exe);
+    if(markdown_exe.length() == 0)
+        do_markdown = false;
+    
     makeindex(index_path);
     
     start_vm(argc, argv);
     
     Output * output = new HTMLOutput(stdout);
+    if(do_markdown)
+        output->set_doc_text_filter(new MarkdownTextFilter(markdown_exe));
     
     // iterate through types
     
@@ -610,11 +647,155 @@ void makeindex(const std::string &filepath)
         fprintf(stderr, "error: unable to open index file '%s'\n", filepath.c_str());
 }
 
+
 std::string urlforclass(const std::string &cls)
 {    
     if(g_index.count(cls))
         return g_index[cls];
     else
         return "";
+}
+
+
+// from http://stackoverflow.com/questions/236129/split-a-string-in-c 
+std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems) {
+    std::stringstream ss(s);
+    std::string item;
+    while (std::getline(ss, item, delim)) {
+        elems.push_back(item);
+    }
+    return elems;
+}
+
+
+std::string find_exe(const std::string &exe)
+{
+    std::string PATH = getenv("PATH");
+    std::vector<std::string> subpaths;
+    split(PATH, ':', subpaths);
+    for(int i = 0; i < subpaths.size(); i++)
+    {
+        std::string exe_path = subpaths[i] + '/' + exe;
+        struct stat info;
+        int res = stat(exe_path.c_str(), &info);
+        if(res == 0)
+            return exe_path;
+    }
+    
+    return "";
+}
+
+
+std::string filter_markdown(const std::string &md_exe, const std::string &md_text)
+{
+    int pid = 0;
+    int res = 0;
+    int fd_md = 0, fd_html = 0;
+    FILE *cfd_md = NULL;
+    char md_path[PATH_MAX];
+    char html_path[PATH_MAX];
+    memset(md_path, 0, PATH_MAX);
+    memset(html_path, 0, PATH_MAX);
+    std::string html_text;
+    
+    const char *tmpdir = getenv("TMPDIR");
+    if(tmpdir == NULL)
+        tmpdir = "/tmp";
+    
+    snprintf(md_path, PATH_MAX, "%s/ckdoc.md.XXXXXX", tmpdir);
+    fd_md = mkstemp(md_path);
+    if(fd_md == -1)
+    {
+        // error
+        fprintf(stderr, "error: fd_md == -1\n");
+        goto error;
+    }
+
+    cfd_md = fdopen(fd_md, "w+");
+    res = fputs(md_text.c_str(), cfd_md);
+    if(res < 0)
+    {
+        // error
+        fprintf(stderr, "error: unable to write to md tmpfile\n");
+        goto error;
+    }
+    fflush(cfd_md);
+    fclose(cfd_md);
+    cfd_md = NULL;
+
+    snprintf(html_path, PATH_MAX, "%s/ckdoc.html.XXXXXX", tmpdir);
+    fd_html = mkstemp(html_path);
+    if(fd_html == -1)
+    {
+        // error
+        fprintf(stderr, "error: fd_html == -1\n");
+        goto error;
+    }
+
+    pid = fork();
+
+    if(pid == 0)
+    {
+        // child process
+        fd_md = open(md_path, O_RDONLY);
+        close(STDIN_FILENO);
+        dup2(fd_md, STDIN_FILENO);
+        
+        fd_html = open(html_path, O_WRONLY);
+        close(STDOUT_FILENO);
+        dup2(fd_html, STDOUT_FILENO);
+        
+        execlp(md_exe.c_str(), md_exe.c_str(), NULL);
+    }
+    else
+    {
+        // parent process
+
+        if(pid == -1)
+        {
+            // error
+            fprintf(stderr, "error: pid == -1\n");
+            goto error;
+        }
+        else
+        {
+            int status = 0;
+            waitpid(pid, &status, 0);
+
+            char buf[1024];
+            memset(buf, 0, 1024);
+            FILE *cfd_html = fopen(html_path, "r");
+
+            while(fgets(buf, 1024, cfd_html))
+            {
+                // fprintf(stderr, "buf: %s\n", buf);
+                html_text += buf;
+                buf[0] = '\0';
+            }
+            // fprintf(stderr, "buf: %s\n", buf);
+            html_text += buf;
+
+            fclose(cfd_html);
+            cfd_html = NULL;
+
+            // fprintf(stderr, "*** md: %s ***\n", md_text.c_str());
+            // fprintf(stderr, "*** html: %s ***\n", html_text.c_str());
+        }
+    }
+
+error:
+    if(fd_md > 0)
+        close(fd_md);
+    if(cfd_md != NULL)
+        fclose(cfd_md);
+    if(fd_html > 0)
+        close(fd_html);
+    if(md_path[0]) unlink(md_path);
+    if(html_path[0]) unlink(html_path);
+
+    if(html_text.length() > 0)
+        return html_text;
+    else
+        return md_text;
 }
 

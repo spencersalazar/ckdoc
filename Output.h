@@ -23,10 +23,16 @@
 #include "chuck_type.h"
 #include <string>
 
+class TextFilter;
+
 class Output
 {
 public:
-    
+
+    Output() { m_doc_text_filter = NULL; }
+    virtual ~Output() { }
+    void set_doc_text_filter(TextFilter *filter) { m_doc_text_filter = filter; }
+
     virtual void begin(const std::string &title) = 0;
     virtual void heading() = 0;
     virtual void end() = 0;
@@ -67,7 +73,18 @@ public:
     virtual void func_arg(a_Arg_List arg) = 0;
     
     virtual void end_class() = 0;
+    
+protected:
+    TextFilter *m_doc_text_filter;
 };
+
+
+class TextFilter
+{
+public:
+    virtual std::string filter(const std::string &) = 0;
+};
+
 
 std::string urlforclass(const std::string &cls);
 
