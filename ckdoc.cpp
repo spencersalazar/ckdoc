@@ -688,6 +688,7 @@ std::string find_exe(const std::string &exe)
 
 std::string filter_markdown(const std::string &md_exe, const std::string &md_text)
 {
+    // TODO: use pipe instead
     int pid = 0;
     int res = 0;
     int fd_md = 0, fd_html = 0;
