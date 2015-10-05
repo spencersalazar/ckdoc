@@ -172,7 +172,7 @@ IO_INDEX=$(foreach CLASS,$(IO_CLASSES),$(CLASS) $(IO_FILE)\n)
 CHUGINS_TITLE=ChuGins
 CHUGINS_CLASSES=ABSaturator AmbPan3 Bitcrusher MagicSine KasFilter FIR \
     Pan4 Pan8 Pan16 PitchTrack GVerb Mesh2D Spectacle Elliptic \
-	WinFuncEnv PowerADSR FoldbackSaturator
+    WinFuncEnv PowerADSR FoldbackSaturator WPDiodeLadder WPKorg35
 CHUGINS_FILE=chugins.html
 CHUGINS_INDEX=$(foreach CLASS,$(CHUGINS_CLASSES),$(CLASS) $(CHUGINS_FILE)\n)
 
