@@ -120,9 +120,7 @@ t_CKBOOL start_vm()
         // allocate the vm - needs the type system
         g_vm = new Chuck_VM;
         
-        if( !g_vm->initialize( enable_audio, vm_halt, srate, buffer_size,
-                               num_buffers, dac, adc, output_channels,
-                               input_channels, block ) )
+        if( !g_vm->initialize( srate, output_channels, input_channels, buffer_size, vm_halt ) )
         {
             fprintf( stderr, "[chuck]: %s\n", g_vm->last_error() );
             // pop
