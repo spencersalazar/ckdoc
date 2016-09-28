@@ -177,7 +177,7 @@ CHUGINS_FILE=chugins.html
 CHUGINS_INDEX=$(foreach CLASS,$(CHUGINS_CLASSES),$(CLASS) $(CHUGINS_FILE)\n)
 
 CHUGL_TITLE=ChuGL
-CHUGL_CLASSES=chugl chuglImage OpenGL curve curveExp
+CHUGL_CLASSES=chugl chuglImage Pointer OpenGL curve curveExp
 CHUGL_FILE=chugl.html
 CHUGL_INDEX=$(foreach CLASS,$(CHUGINS_CLASSES),$(CLASS) $(CHUGINS_FILE)\n)
 
